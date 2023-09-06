@@ -10,9 +10,13 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Grid : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI gridText;
+        [SerializeField] BoxCollider2D boxCollider2D;
         [SerializeField] Image gridImg;
+        public GameObject straightColorGm,startColorGm;
         public bool isMarked,isCorrect;
         [SerializeField] Vector2Int id;
+        public Vector2 straightImgSize;
+        [SerializeField] float straightLineWidthOffset = 20f;
 
         public Vector2Int gridID
         {
@@ -37,9 +41,20 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
+
+        public void SetBoxColliderSize(float width,float height)
+        {
+            boxCollider2D.size = new Vector2(width, height);
+        }
         public void SetGridColor(Color color)
         {
             gridImg.color = color;
+        }
+
+        public void SetLineColorTransform(float width,float height)
+        {
+            straightImgSize = new Vector2(width - straightLineWidthOffset, height);
+            straightColorGm.GetComponent<RectTransform>().sizeDelta = straightImgSize;
         }
     }
 }

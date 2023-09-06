@@ -13,16 +13,17 @@ namespace YugantLoyaLibrary.WordSearchGame
         [Header("Main Info")]
         LevelHandler levelHandler;
         [SerializeField] GameObject gridPrefab;
-        [SerializeField] Transform gridContainer;
+        [SerializeField] Transform gridContainer, lineParentTrans;
         [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
-        [SerializeField] LineRenderer lineRenderer;
+        [SerializeField] Image lineImg;
         public Vector2Int gridSize;
         float currGridWidth, currGridHeight;
 
         [Header("Input Data Info")]
         public TextMeshProUGUI touchText;
-        public float inputLineWidth = 0.4f;
-        public float linePointDiff = 20f;
+        [SerializeField] float defaultLineWidth = 100f;
+        [SerializeField] float defaultLineHeight = 125f;
+
         public string touchTextData
         {
             get
@@ -64,10 +65,29 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         }
 
-        public LineRenderer GetLineRenderer()
+        public Vector2 GetDefaultLineSize()
         {
-            Debug.Log("Get Line Renderer Called !" + lineRenderer);
-            return lineRenderer;
+            return new Vector2(defaultLineWidth, defaultLineHeight);
+        }
+
+        public RectTransform GetLineImgRect()
+        {
+            return lineImg.GetComponent<RectTransform>();
+        }
+
+        public Image GetLineImg()
+        {
+            return lineImg;
+        }
+
+        public CapsuleCollider2D GetLineImgCollider()
+        {
+            return lineImg.gameObject.GetComponent<CapsuleCollider2D>();
+        }
+
+        public Transform GetLineParentTrans()
+        {
+            return lineParentTrans;
         }
 
         public void AssignLevelHandler(LevelHandler handler)
@@ -126,11 +146,13 @@ namespace YugantLoyaLibrary.WordSearchGame
                     gridScript.gridID = new Vector2Int(i, j);
                     levelHandler.totalGridsList.Add(gridScript);
                     GenerateRandom_ASCII_Code(gridScript);
+                    gridScript.SetBoxColliderSize(currGridWidth / 2, currGridHeight / 2);
+                    gridScript.SetLineColorTransform(currGridWidth, currGridHeight);
                 }
             }
 
-            lineRenderer.startWidth = inputLineWidth;
-            lineRenderer.endWidth = inputLineWidth;
+            GetLineImgRect().sizeDelta = new Vector2(defaultLineWidth, defaultLineHeight);
+
         }
 
         void GenerateRandom_ASCII_Code(Grid grid)

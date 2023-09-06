@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,8 +10,21 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Grid : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI gridText;
-        [SerializeField] BoxCollider2D boxCollider2D;
+        [SerializeField] Image gridImg;
+        public bool isMarked,isCorrect;
+        [SerializeField] Vector2Int id;
 
+        public Vector2Int gridID
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                id = value;
+            }
+        }
         public string gridTextData
         {
             get
@@ -23,9 +37,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
-        public void UpdateColliderSize(float sizeX,float sizeY)
+        public void SetGridColor(Color color)
         {
-            boxCollider2D.size = new Vector2(sizeX,sizeY);
+            gridImg.color = color;
         }
     }
 }

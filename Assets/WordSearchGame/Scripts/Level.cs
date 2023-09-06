@@ -11,19 +11,21 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Level : MonoBehaviour
     {
         [Header("Main Info")]
+        LevelHandler levelHandler;
         [SerializeField] GameObject gridPrefab;
         [SerializeField] Transform gridContainer;
         [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
+        [SerializeField] LineRenderer lineRenderer;
         public Vector2Int gridSize;
         float currGridWidth, currGridHeight;
 
         [Header("Input Data Info")]
         public TextMeshProUGUI touchText;
-        
-
+        public float inputLineWidth = 0.4f;
+        public float linePointDiff = 20f;
         public string touchTextData
         {
-            get 
+            get
             {
                 return touchText.text;
             }
@@ -34,17 +36,43 @@ namespace YugantLoyaLibrary.WordSearchGame
         }
 
 
+
+        private void OnEnable()
+        {
+
+        }
+
+        private void OnDisable()
+        {
+
+        }
+
         private void Awake()
         {
             Init();
             SetGridLayout();
             SetGridSize();
+        }
+
+        private void Start()
+        {
             CreateGrid();
         }
 
         void Init()
         {
 
+        }
+
+        public LineRenderer GetLineRenderer()
+        {
+            Debug.Log("Get Line Renderer Called !" + lineRenderer);
+            return lineRenderer;
+        }
+
+        public void AssignLevelHandler(LevelHandler handler)
+        {
+            levelHandler = handler;
         }
 
         void SetGridLayout()
@@ -72,11 +100,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             float height = gridContainer.GetComponent<RectTransform>().sizeDelta.y;
 
             Debug.Log($"Width : {width} , Height : {height}");
-            float spacingX =  (gridSize.x - 1) * gridContainerLayoutGroup.spacing.x;
+            float spacingX = (gridSize.x - 1) * gridContainerLayoutGroup.spacing.x;
             float spacingY = (gridSize.y - 1) * gridContainerLayoutGroup.spacing.y;
 
             float gridWidth = (float)(width - spacingX) / (float)(gridSize.x);
-            float gridHeight = (float)(height - spacingY)/ (float)(gridSize.y);
+            float gridHeight = (float)(height - spacingY) / (float)(gridSize.y);
 
             currGridWidth = gridWidth;
             currGridHeight = gridHeight;
@@ -94,12 +122,24 @@ namespace YugantLoyaLibrary.WordSearchGame
                 {
                     GameObject gmObj = Instantiate(gridPrefab, gridContainer);
                     gmObj.name = $"Grid_{i}_{j}";
-                    //gmObj.GetComponent<Grid>().UpdateColliderSize(currGridWidth, currGridHeight);
+                    Grid gridScript = gmObj.GetComponent<Grid>();
+                    gridScript.gridID = new Vector2Int(i, j);
+                    levelHandler.totalGridsList.Add(gridScript);
+                    GenerateRandom_ASCII_Code(gridScript);
                 }
             }
+
+            lineRenderer.startWidth = inputLineWidth;
+            lineRenderer.endWidth = inputLineWidth;
         }
 
-       
+        void GenerateRandom_ASCII_Code(Grid grid)
+        {
+            int randomASCII_Val = Random.Range(065, 091);
+            char letter = (char)randomASCII_Val;
+            grid.gridTextData = letter.ToString();
+        }
+
     }
 
 }

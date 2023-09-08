@@ -12,18 +12,20 @@ namespace YugantLoyaLibrary.WordSearchGame
     {
         [Header("Main Info")]
         LevelHandler levelHandler;
+        public Vector2Int gridSize;
         [SerializeField] GameObject gridPrefab;
         [SerializeField] Transform gridContainer, lineParentTrans;
         [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
-        [SerializeField] Image lineImg;
-        public Vector2Int gridSize;
+        [SerializeField] LineRenderer lineRenderer;
+
+        [Header("Grid Data")]
+        [TextArea(5, 5)]
+        public string gridData;
+
         float currGridWidth, currGridHeight;
 
         [Header("Input Data Info")]
         public TextMeshProUGUI touchText;
-        [SerializeField] float defaultLineWidth = 100f;
-        [SerializeField] float defaultLineHeight = 125f;
-
         public string touchTextData
         {
             get
@@ -37,52 +39,21 @@ namespace YugantLoyaLibrary.WordSearchGame
         }
 
 
-
-        private void OnEnable()
-        {
-
-        }
-
-        private void OnDisable()
-        {
-
-        }
-
         private void Awake()
         {
-            Init();
             SetGridLayout();
             SetGridSize();
         }
 
         private void Start()
         {
+            StartInit();
             CreateGrid();
         }
 
-        void Init()
+        void StartInit()
         {
 
-        }
-
-        public Vector2 GetDefaultLineSize()
-        {
-            return new Vector2(defaultLineWidth, defaultLineHeight);
-        }
-
-        public RectTransform GetLineImgRect()
-        {
-            return lineImg.GetComponent<RectTransform>();
-        }
-
-        public Image GetLineImg()
-        {
-            return lineImg;
-        }
-
-        public CapsuleCollider2D GetLineImgCollider()
-        {
-            return lineImg.gameObject.GetComponent<CapsuleCollider2D>();
         }
 
         public Transform GetLineParentTrans()
@@ -90,9 +61,28 @@ namespace YugantLoyaLibrary.WordSearchGame
             return lineParentTrans;
         }
 
+        public LineRenderer GetLineRenderer()
+        {
+            return lineRenderer;
+        }
+
+        public void SetLineRendererPoint(int index, Vector2 pos)
+        {
+            Vector2 canvasMousePos;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(levelHandler.canvasRectTrans, pos, levelHandler.cam, out canvasMousePos);
+
+            lineRenderer.SetPosition(index, canvasMousePos);
+
+        }
+
         public void AssignLevelHandler(LevelHandler handler)
         {
             levelHandler = handler;
+        }
+
+        public Transform GetGridContainerTrans()
+        {
+            return gridContainer;
         }
 
         void SetGridLayout()
@@ -145,14 +135,26 @@ namespace YugantLoyaLibrary.WordSearchGame
                     Grid gridScript = gmObj.GetComponent<Grid>();
                     gridScript.gridID = new Vector2Int(i, j);
                     levelHandler.totalGridsList.Add(gridScript);
+                    AssignGridData(i,j);
                     GenerateRandom_ASCII_Code(gridScript);
                     gridScript.SetBoxColliderSize(currGridWidth / 2, currGridHeight / 2);
                     gridScript.SetLineColorTransform(currGridWidth, currGridHeight);
                 }
             }
 
-            GetLineImgRect().sizeDelta = new Vector2(defaultLineWidth, defaultLineHeight);
+        }
 
+        private void AssignGridData(int row , int column)
+        {
+            string gridData = GameController.Instance.GetGridDataOfLevel();
+
+           
+
+            for(int i = 0;i < gridData.Length;i++)
+            {
+
+            }
+           
         }
 
         void GenerateRandom_ASCII_Code(Grid grid)

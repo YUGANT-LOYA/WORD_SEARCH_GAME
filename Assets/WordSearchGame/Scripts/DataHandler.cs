@@ -8,8 +8,6 @@ namespace YugantLoyaLibrary.WordSearchGame
     {
         public static DataHandler Instance;
 
-
-
         private void Awake()
         {
             CreateSingleton();
@@ -27,5 +25,17 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
+
+        public int CurrLevelNumber
+        {
+            get
+            {
+                return PlayerPrefs.GetInt(StringHelper.LEVEL_NUM, 0);
+            }
+            set
+            {
+                PlayerPrefs.SetInt(StringHelper.LEVEL_NUM, value);
+            }
+        }
     }
 }

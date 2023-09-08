@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         [Header("References")]
         [SerializeField] UI_Manager ui_Manager;
+        public LevelDataInfo levelDataInfo;
         [SerializeField] LevelHandler levelHandler;
         [SerializeField] Transform levelContainer;
         [SerializeField] GameObject levelPrefab;
@@ -28,12 +30,21 @@ namespace YugantLoyaLibrary.WordSearchGame
             TOP
         }
 
+        public enum Direction
+        {
+            VERTICAL,
+            HORIZONTAL,
+            STRAIGHT_DIAGONAL,
+            REVERSE_DIAGONAL
+        }
+
 
 
         private void Awake()
         {
             CreateSingleton();
             ClearLevelContainer();
+            GameStartInfo();
             CreateLevel();
         }
 
@@ -58,8 +69,26 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             GameObject level = Instantiate(levelPrefab, levelContainer);
             currLevel = level.GetComponent<Level>();
+            AssignLevelData();
             currLevel.AssignLevelHandler(levelHandler);
             levelHandler.AssignLevel(currLevel);
+        }
+
+        private void AssignLevelData()
+        {
+            currLevel.gridSize = levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber].gridSize;
+
+        }
+
+        public string GetGridDataOfLevel()
+        {
+            return levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber].gridData;
+        }
+
+        void GameStartInfo()
+        {
+            DataHandler.Instance.CurrLevelNumber = 0;
+
         }
 
         void ClearLevelContainer()
@@ -87,7 +116,8 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         void ResetData()
         {
-            
+            levelHandler.inputGridsList.Clear();
+            levelHandler.totalGridsList.Clear();
         }
     }
 }

@@ -358,7 +358,7 @@ Canvas:
   m_GameObject: {fileID: 805590169}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 1425558545}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -450,6 +450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ui_Manager: {fileID: 805590174}
+  levelInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
   levelHandler: {fileID: 1522073353}
   levelContainer: {fileID: 1522073352}
   levelPrefab: {fileID: 3546663009718316906, guid: 7d0fa61aa0a35894ea31bb22656eac7e, type: 3}
@@ -805,18 +806,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0703e26934bdc749a6e151664bf190c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 0}
   currLevel: {fileID: 0}
   currGrid: {fileID: 0}
   startingGrid: {fileID: 0}
-  secondGrid: {fileID: 0}
-  endGrid: {fileID: 0}
+  targetGrid: {fileID: 0}
   gridLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  lineOffsetVector: {x: 550, y: 667}
   totalGridsList: []
   inputGridsList: []
   draggingDirection: 0
+  mainDir: 0
+  canvasRectTrans: {fileID: 1522073352}
 --- !u!114 &1522073354
 MonoBehaviour:
   m_ObjectHideFlags: 0

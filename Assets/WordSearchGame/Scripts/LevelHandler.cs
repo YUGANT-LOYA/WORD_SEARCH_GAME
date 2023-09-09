@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,49 +8,62 @@ namespace YugantLoyaLibrary.WordSearchGame
 {
     public class LevelHandler : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
+        [Header("References")]
         [HideInInspector] public Camera cam;
         [SerializeField] Level currLevel;
         [SerializeField] LineRenderer lineRendererPrefab;
         [SerializeField] Grid currGrid, startingGrid, targetGrid;
         [SerializeField] LayerMask gridLayerMask;
-        public char[][] gridData;
-        public List<Grid> totalGridsList, inputGridsList;
-        public List<string> answerList;
-        public delegate void NewLetterDelegate(Grid grid);
-        NewLetterDelegate OnNewLetterAddEvent, OnLetterRemoveEvent, OnDragInputEvent;
+        public RectTransform canvasRectTrans;
+        CanvasGroup canvasGroup;
 
+        public delegate void NewLetterDelegate(Grid grid);
+        NewLetterDelegate OnNewLetterAddEvent;
         public delegate void GameCompleteDelegate();
         GameCompleteDelegate OnGameCompleteEvent;
 
+
+        [Header("Level Info")]
+        public char[][] gridData;
+        public List<Grid> totalGridsList, inputGridsList;
+        public List<string> answerList;
         public GameController.InputDirection draggingDirection;
         public GameController.Direction mainDir;
+        Vector2 inputMousePos;
+        bool isLevelRunning = true;
 
-        Vector2 lastPos, startPos, currPos, inputMousePos;
-        public RectTransform canvasRectTrans;
 
         private void OnEnable()
         {
             OnNewLetterAddEvent += AddNewLetter;
-            OnDragInputEvent += DraggingInput;
+            OnGameCompleteEvent += LevelComplete;
+
         }
 
         private void OnDisable()
         {
             OnNewLetterAddEvent -= AddNewLetter;
-            OnDragInputEvent -= DraggingInput;
+            OnGameCompleteEvent -= LevelComplete;
         }
 
         private void Awake()
         {
-
+            Init();
         }
 
-        public void Init()
+        void Init()
         {
+            //Debug.Log("Level Handler Init Called !");
             cam = Camera.main;
+            canvasGroup = GetComponent<CanvasGroup>();
             totalGridsList = new List<Grid>();
             inputGridsList = new List<Grid>();
             answerList = new List<string>();
+        }
+
+        public void LevelStartInit()
+        {
+            isLevelRunning = true;
         }
 
         public void GetGridData()
@@ -97,6 +108,9 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            if (!isLevelRunning)
+                return;
+
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
 
             if (currObj != null)
@@ -106,7 +120,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 if (IsLayerSame(currObj) && !IsGridExistInList(gridScript))
                 {
                     //Debug.Log("GameObj : " + eventData.pointerCurrentRaycast.gameObject);
-                    InputStartData(gridScript, eventData);
+                    InputStartData(gridScript);
                 }
             }
 
@@ -115,9 +129,10 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (!isLevelRunning)
+                return;
+
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
-            currPos = Input.mousePosition;
-            Debug.Log("curr Pos : " + currPos);
             inputMousePos = Input.mousePosition;
 
             if (currObj != null && startingGrid != null && IsLayerSame(currObj))
@@ -131,24 +146,22 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            if (!isLevelRunning)
+                return;
+            Debug.Log("Pointer Up");
+
             startingGrid = null;
             CheckAnswer();
         }
 
-        void InputStartData(Grid gridScript, PointerEventData pointerEventData)
+        void InputStartData(Grid gridScript)
         {
             inputMousePos = Input.mousePosition;
             startingGrid = gridScript;
-            startPos = inputMousePos;
             currGrid = startingGrid;
             currLevel.GetLineRenderer().gameObject.SetActive(true);
             SetLinePoints(1, 0, startingGrid);
             OnNewLetterAddEvent?.Invoke(gridScript);
-        }
-
-        private void DraggingInput(Grid gridScript)
-        {
-
         }
 
         Grid GetGridLineLastPoint()
@@ -223,7 +236,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                     if (grid != null)
                     {
-                        Debug.Log("Grid Found : " + grid.gameObject.name);
+                        //Debug.Log("Grid Found : " + grid.gameObject.name);
                         return grid;
                     }
                 }
@@ -257,123 +270,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                 currLevel.touchTextData += gridObj.gridTextData;
                 inputGridsList.Add(gridObj);
             }
-        }
-
-        void CheckDirection()
-        {
-            // gridId x is behaving as column(j).
-            //gridId y is behaving as row(i).
-            //It is reverse in terms of x and y.
-            int firstX = startingGrid.gridID.x;
-            int firstY = startingGrid.gridID.y;
-            int secondX = targetGrid.gridID.x;
-            int secondY = targetGrid.gridID.y;
-
-            if (secondX - firstX == 1)
-            {
-                if (secondY - firstY == 1)
-                {
-                    draggingDirection = GameController.InputDirection.BOTTOM_RIGHT;
-                }
-                else if (secondY - firstY == 0)
-                {
-                    draggingDirection = GameController.InputDirection.BOTTOM;
-                }
-                else if (secondY - firstY == -1)
-                {
-                    draggingDirection = GameController.InputDirection.BOTTOM_LEFT;
-                }
-            }
-            else if (secondX - firstX == 0)
-            {
-                if (secondY - firstY == 1)
-                {
-                    draggingDirection = GameController.InputDirection.RIGHT;
-                }
-                else if (secondY - firstY == 0)
-                {
-                    draggingDirection = GameController.InputDirection.NONE;
-                }
-                else if (secondY - firstY == -1)
-                {
-                    draggingDirection = GameController.InputDirection.LEFT;
-                }
-            }
-            else if (secondX - firstX == -1)
-            {
-                if (secondY - firstY == 1)
-                {
-                    draggingDirection = GameController.InputDirection.TOP_RIGHT;
-                }
-                else if (secondY - firstY == 0)
-                {
-                    draggingDirection = GameController.InputDirection.TOP;
-                }
-                else if (secondY - firstY == -1)
-                {
-                    draggingDirection = GameController.InputDirection.TOP_LEFT;
-                }
-            }
-
-            //switch (draggingDirection)
-            //{
-            //    case GameController.InputDirection.NONE:
-
-            //        Debug.Log("None !");
-
-            //        break;
-
-            //    case GameController.InputDirection.TOP:
-
-            //        Debug.Log("TOP !");
-
-
-            //        break;
-
-            //    case GameController.InputDirection.TOP_LEFT:
-
-            //        Debug.Log("TOP LEFT !");
-
-            //        break;
-
-            //    case GameController.InputDirection.TOP_RIGHT:
-
-            //        Debug.Log("TOP RIGHT !");
-
-            //        break;
-
-            //    case GameController.InputDirection.BOTTOM:
-
-            //        Debug.Log("BOTTOM !");
-
-
-            //        break;
-
-            //    case GameController.InputDirection.BOTTOM_LEFT:
-
-            //        Debug.Log("BOTTOM LEFT !");
-
-            //        break;
-
-            //    case GameController.InputDirection.BOTTOM_RIGHT:
-
-            //        Debug.Log("BOTTOM RIGHT !");
-
-            //        break;
-
-            //    case GameController.InputDirection.LEFT:
-
-            //        Debug.Log("LEFT !");
-
-            //        break;
-
-            //    case GameController.InputDirection.RIGHT:
-
-            //        Debug.Log("RIGHT !");
-
-            //        break;
-            //}
-
         }
 
         void InputDataReset(bool isMarkedCorrect)
@@ -608,7 +504,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             if (isComplete)
             {
-                GameController.Instance.NextLevel();
+                OnGameCompleteEvent?.Invoke();
             }
         }
 
@@ -650,9 +546,12 @@ namespace YugantLoyaLibrary.WordSearchGame
             currLevel.SetLineRenderer(line, color);
         }
 
-        void MarkAnswerFound()
+        private void LevelComplete()
         {
+            isLevelRunning = false;
 
+            GameController.Instance.NextLevel();
         }
+
     }
 }

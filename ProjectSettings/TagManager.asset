@@ -41,6 +41,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Line
+  - name: FadeScreen
     uniqueID: 26382437
     locked: 0

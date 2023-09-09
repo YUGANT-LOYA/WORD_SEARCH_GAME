@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
@@ -15,7 +16,11 @@ namespace YugantLoyaLibrary.WordSearchGame
         [SerializeField] LevelHandler levelHandler;
         [SerializeField] Transform levelContainer;
         [SerializeField] GameObject levelPrefab;
+        [SerializeField] CanvasGroup fadeCanvasGroup;
         Level currLevel;
+
+
+        [SerializeField] float timeToSwitchToNextLevel = 1f;
 
         public enum InputDirection
         {
@@ -40,15 +45,16 @@ namespace YugantLoyaLibrary.WordSearchGame
         }
 
 
-
         private void Awake()
         {
             CreateSingleton();
+        }
+
+        private void Start()
+        {
             GameStartInfo();
             RestartLevel();
         }
-
-
 
         void CreateSingleton()
         {
@@ -66,16 +72,15 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             GameObject level = Instantiate(levelPrefab, levelContainer);
             currLevel = level.GetComponent<Level>();
-            currLevel.AssignLevelHandler(levelHandler);
-            levelHandler.AssignLevel(currLevel);
-            levelHandler.Init();
             AssignLevelData();
         }
 
         private void AssignLevelData()
         {
+            currLevel.AssignLevelHandler(levelHandler);
+            levelHandler.AssignLevel(currLevel);
+            levelHandler.LevelStartInit();
             currLevel.gridSize = GetLevelDataInfo().gridSize;
-            ResetData();
             levelHandler.GetGridData();
             currLevel.StartInit();
         }
@@ -137,7 +142,19 @@ namespace YugantLoyaLibrary.WordSearchGame
                 DataHandler.Instance.CurrLevelNumber = 0;
             }
 
-            RestartLevel();
+            StartCoroutine(nameof(FadeScreen));
+        }
+
+        void FadeScreen()
+        {
+            fadeCanvasGroup.DOFade(1f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
+            {
+                RestartLevel();
+                fadeCanvasGroup.DOFade(0f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
+                {
+                   
+                });
+            });
         }
     }
 }

@@ -36,6 +36,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void StartInit()
         {
+            //Debug.Log("Level StartInit Called !");
             SetGridLayout();
             SetGridSize();
             CreateGrid(); 
@@ -200,7 +201,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 if (quesList[i].quesTextData == ans && !quesList[i].isMarked)
                 {
+                    Debug.Log("Ques Matched !");
                     quesList[i].isMarked = true;
+                    quesList[i].StrikeQues();
                 }
             }
         }

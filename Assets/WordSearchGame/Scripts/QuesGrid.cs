@@ -19,4 +19,10 @@ public class QuesGrid : MonoBehaviour
             quesText.text = value;
         }
     }
+
+    public void StrikeQues()
+    {
+        string str = $"<b><s>{quesTextData}</s></b>";
+        quesTextData = str;
+    }
 }

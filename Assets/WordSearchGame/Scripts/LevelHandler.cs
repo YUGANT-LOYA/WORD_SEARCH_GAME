@@ -125,19 +125,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 Grid gridScript = currObj.GetComponent<Grid>();
                 currGrid = gridScript;
 
-                if (!IsGridExistInList(gridScript))
-                {
-                    OnDragInputEvent?.Invoke(gridScript);
-                }
-
-                //GetGridLineLastPoint();
                 SetTargetGrid();
-
-                //Vector2 pos = ConvertLinePointToMousePos(1);
-                //Vector3 linePoint = ConvertMouseToLineRendererPoint(pos);
-                //Grid g = GetGrid(Input.mousePosition);
-                //Vector2 wPos = ConvertTransformToMousePos(g.transform.position);
-                //Debug.Log("w Pos : " + wPos);
             }
         }
 
@@ -162,7 +150,6 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
 
         }
-
 
         Grid GetGridLineLastPoint()
         {
@@ -230,15 +217,13 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 GameObject hitObject = result.gameObject;
 
-
-
                 if (IsLayerSame(hitObject))
                 {
                     Grid grid = hitObject.GetComponent<Grid>();
 
                     if (grid != null)
                     {
-                        //Debug.Log("Grid Found : " + grid.gameObject.name);
+                        Debug.Log("Grid Found : " + grid.gameObject.name);
                         return grid;
                     }
                 }
@@ -266,9 +251,12 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         void AddNewLetter(Grid gridObj)
         {
-            gridObj.isMarked = true;
-            currLevel.touchTextData += gridObj.gridTextData;
-            inputGridsList.Add(gridObj);
+            if (gridObj != null)
+            {
+                gridObj.isMarked = true;
+                currLevel.touchTextData += gridObj.gridTextData;
+                inputGridsList.Add(gridObj);
+            }
         }
 
         void CheckDirection()
@@ -391,6 +379,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         void InputDataReset(bool isMarkedCorrect)
         {
             inputGridsList.Clear();
+            mainDir = GameController.Direction.NONE;
             currLevel.touchTextData = "";
             currGrid = null;
             startingGrid = null;
@@ -413,6 +402,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             inputGridsList.Clear();
             totalGridsList.Clear();
             answerList.Clear();
+            mainDir = GameController.Direction.NONE;
         }
 
         void SetTargetGrid()
@@ -448,15 +438,13 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
             else
             {
+                mainDir = GameController.Direction.NONE;
                 //Debug.Log("Random Pattern Moving !");
             }
 
-
-            Vector2 pos = ConvertTransformToMousePos(currGrid.transform.position);
-            targetGrid = GetGridByMousePos(pos);
-
+            Vector2 targetPos = ConvertLinePointToMousePos(1);
+            targetGrid = GetGridByMousePos(targetPos);
             UpdateInputList();
-
         }
 
         void UpdateInputList()
@@ -578,10 +566,17 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         Grid GetGridByGridID(int i, int j)
         {
-            int index = i * currLevel.gridSize.x + j;
-            Grid grid = currLevel.GetGridContainerTrans().GetChild(index).gameObject.GetComponent<Grid>();
-            //Debug.Log($"Index {index}, Grid Name : {grid.name}");
-            return grid;
+            //Debug.Log($"I : {i}, J : {j}");
+            if (i >= 0 && i < currLevel.gridSize.x && j >= 0 && j < currLevel.gridSize.y)
+            {
+                int index = i * currLevel.gridSize.x + j;
+
+                Grid grid = currLevel.GetGridContainerTrans().GetChild(index).gameObject.GetComponent<Grid>();
+                //Debug.Log($"Index {index}, Grid Name : {grid.name}");
+                return grid;
+            }
+
+            return null;
         }
 
         void CheckAnswer()
@@ -593,7 +588,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             foreach (string str in answerList)
             {
                 string originalString;
-                string revStr = GetReverseString(str,out originalString);
+                string revStr = GetReverseString(str, out originalString);
 
                 //Debug.Log("Original Str : " + originalString);
                 QuesGrid quesGrid = currLevel.GetQuesGrid(originalString, revStr);
@@ -617,7 +612,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
-        public string GetReverseString(string str,out string originalString)
+        public string GetReverseString(string str, out string originalString)
         {
             string mainStr = str.ToUpper();
             char[] revArr = mainStr.ToCharArray();

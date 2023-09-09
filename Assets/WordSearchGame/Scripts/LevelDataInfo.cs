@@ -13,7 +13,8 @@ namespace YugantLoyaLibrary.WordSearchGame
             public Vector2Int gridSize;
             [TextArea(10, 10)]
             public string gridData;
-            public char[][] data;
+            public TextAsset gridDataTextFile;
+            public List<string> words;
         }
 
         public List<LevelInfo> levelInfo;

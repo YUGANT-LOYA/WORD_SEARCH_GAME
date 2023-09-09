@@ -274,6 +274,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d63c616eee17ed408db6b9673a71672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalColors:
+  - {r: 0.38364774, g: 1, b: 0.4247762, a: 1}
+  - {r: 1, g: 0.37070796, b: 0.30817604, a: 1}
+  - {r: 0.32704395, g: 1, b: 0.9806617, a: 1}
+  - {r: 0.35534585, g: 0.4606992, b: 1, a: 1}
+  - {r: 0.78270316, g: 0.34591186, b: 1, a: 1}
+  - {r: 0.96609396, g: 1, b: 0.27044016, a: 1}
+  - {r: 0.56400055, g: 0.25157225, b: 1, a: 1}
+  - {r: 1, g: 0.64421505, b: 0.12893075, a: 1}
+  colorIndex: 0
 --- !u!4 &512779920
 Transform:
   m_ObjectHideFlags: 0
@@ -450,7 +460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ui_Manager: {fileID: 805590174}
-  levelInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
+  levelDataInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
   levelHandler: {fileID: 1522073353}
   levelContainer: {fileID: 1522073352}
   levelPrefab: {fileID: 3546663009718316906, guid: 7d0fa61aa0a35894ea31bb22656eac7e, type: 3}
@@ -808,6 +818,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   currLevel: {fileID: 0}
+  lineRendererPrefab: {fileID: 6319055306387946753, guid: 507e894a8eb354b4dbe9977498d285fd, type: 3}
   currGrid: {fileID: 0}
   startingGrid: {fileID: 0}
   targetGrid: {fileID: 0}
@@ -816,6 +827,7 @@ MonoBehaviour:
     m_Bits: 64
   totalGridsList: []
   inputGridsList: []
+  answerList: []
   draggingDirection: 0
   mainDir: 0
   canvasRectTrans: {fileID: 1522073352}

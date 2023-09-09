@@ -12,11 +12,12 @@ namespace YugantLoyaLibrary.WordSearchGame
     {
         [HideInInspector] public Camera cam;
         [SerializeField] Level currLevel;
+        [SerializeField] LineRenderer lineRendererPrefab;
         [SerializeField] Grid currGrid, startingGrid, targetGrid;
         [SerializeField] LayerMask gridLayerMask;
         public char[][] gridData;
         public List<Grid> totalGridsList, inputGridsList;
-
+        public List<string> answerList;
         public delegate void NewLetterDelegate(Grid grid);
         NewLetterDelegate OnNewLetterAddEvent, OnLetterRemoveEvent, OnDragInputEvent;
 
@@ -43,14 +44,50 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void Awake()
         {
-            Init();
+
         }
 
-        void Init()
+        public void Init()
         {
             cam = Camera.main;
             totalGridsList = new List<Grid>();
             inputGridsList = new List<Grid>();
+            answerList = new List<string>();
+        }
+
+        public void GetGridData()
+        {
+            string data = GameController.Instance.GetGridDataOfLevel();
+            int row = currLevel.gridSize.x;
+            int col = currLevel.gridSize.y;
+            gridData = new char[row][];
+            string[] lines = data.Split('\n');
+            //Debug.Log("Lines : " + lines.Length);
+            //Debug.Log("Row : " + row);
+            //Debug.Log("Col : " + col);
+
+            for (int i = 0; i < row; i++)
+            {
+                gridData[i] = new char[col];
+                string str = lines[i];
+                //Debug.Log(str.Length);
+                //Debug.Log("str : " + str);
+                for (int j = 0; j < col; j++)
+                {
+                    //Debug.Log(str[j]);
+                    gridData[i][j] = str[j];
+                }
+            }
+
+            List<string> ansList = GameController.Instance.GetLevelDataInfo().words;
+            //Debug.Log("Ans List Count : " + ansList.Count);
+
+            for (int i = 0; i < ansList.Count; i++)
+            {
+                answerList.Add(ansList[i].ToUpper());
+            }
+
+            //Debug.Log("Level Handler Ans List Count : " + answerList.Count);
         }
 
         public void AssignLevel(Level levelScript)
@@ -93,7 +130,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                     OnDragInputEvent?.Invoke(gridScript);
                 }
 
-                GetGridLineLastPoint();
+                //GetGridLineLastPoint();
                 SetTargetGrid();
 
                 //Vector2 pos = ConvertLinePointToMousePos(1);
@@ -107,8 +144,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void OnPointerUp(PointerEventData eventData)
         {
             startingGrid = null;
-
-            InputDataReset();
+            CheckAnswer();
         }
 
         void InputStartData(Grid gridScript, PointerEventData pointerEventData)
@@ -135,13 +171,13 @@ namespace YugantLoyaLibrary.WordSearchGame
                 Vector2 pos = ConvertLinePointToMousePos(1);
                 Grid grid = GetGridByMousePos(pos);
 
-                if(grid != currGrid)
+                if (grid != currGrid)
                 {
-                    Debug.Log("Not Same !");
+                    //Debug.Log("Not Same !");
                 }
                 else
                 {
-                    Debug.Log("Same !");
+                    //Debug.Log("Same !");
                 }
             }
             return null;
@@ -160,7 +196,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             Vector3 worldMousePosition = cam.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, cam.nearClipPlane));
             Vector3 pos = transform.InverseTransformPoint(worldMousePosition);
 
-            Debug.Log("linePoint : " + pos);
+            //Debug.Log("linePoint : " + pos);
 
             return pos;
         }
@@ -171,7 +207,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             // Convert world position to screen space
             Vector3 screenPosition = cam.WorldToScreenPoint(worldPosition);
-            Debug.Log("World Pos : " + screenPosition);
+            //Debug.Log("World Pos : " + screenPosition);
 
             return screenPosition;
         }
@@ -202,7 +238,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                     if (grid != null)
                     {
-                        Debug.Log("Grid Found : " + grid.gameObject.name);
+                        //Debug.Log("Grid Found : " + grid.gameObject.name);
                         return grid;
                     }
                 }
@@ -352,29 +388,31 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         }
 
-        void InputDataReset()
+        void InputDataReset(bool isMarkedCorrect)
         {
-            for (int i = 0; i < inputGridsList.Count; i++)
-            {
-                if (!inputGridsList[i].isCorrect)
-                {
-
-                }
-            }
-
             inputGridsList.Clear();
             currLevel.touchTextData = "";
             currGrid = null;
             startingGrid = null;
             draggingDirection = GameController.InputDirection.NONE;
-            currLevel.GetLineRenderer().positionCount = 0;
-            currLevel.GetLineRenderer().gameObject.SetActive(false);
+
+            if (!isMarkedCorrect)
+            {
+                Debug.Log("Not Correct !");
+                currLevel.GetLineRenderer().positionCount = 0;
+                currLevel.GetLineRenderer().gameObject.SetActive(false);
+            }
+            else
+            {
+                GenerateNewLine();
+            }
         }
 
-        void ResetListData()
+        public void ResetLevelData()
         {
             inputGridsList.Clear();
             totalGridsList.Clear();
+            answerList.Clear();
         }
 
         void SetTargetGrid()
@@ -385,32 +423,32 @@ namespace YugantLoyaLibrary.WordSearchGame
                 //It means that constant X Axis.
                 mainDir = GameController.Direction.HORIZONTAL;
                 SetLinePoints(2, 1, currGrid);
-                Debug.Log("X Direction Pattern Moving !");
+                //Debug.Log("X Direction Pattern Moving !");
             }
             else if (currGrid.gridID.y - startingGrid.gridID.y == 0)
             {
                 //It means that constant Y Axis.
                 mainDir = GameController.Direction.VERTICAL;
                 SetLinePoints(2, 1, currGrid);
-                Debug.Log("Y Direction Pattern Moving !");
+                //Debug.Log("Y Direction Pattern Moving !");
             }
             else if (currGrid.gridID.y - startingGrid.gridID.y == currGrid.gridID.x - startingGrid.gridID.x)
             {
                 //Straight Diagonal Direction Entered.
                 mainDir = GameController.Direction.STRAIGHT_DIAGONAL;
                 SetLinePoints(2, 1, currGrid);
-                Debug.Log("Straight Diagonal Pattern Moving !");
+                //Debug.Log("Straight Diagonal Pattern Moving !");
             }
             else if (currGrid.gridID.y - startingGrid.gridID.y == -(currGrid.gridID.x - startingGrid.gridID.x))
             {
                 //Reverse Diagonal Direction Entered.
                 mainDir = GameController.Direction.REVERSE_DIAGONAL;
                 SetLinePoints(2, 1, currGrid);
-                Debug.Log("Reverse Diagonal Pattern Moving !");
+                //Debug.Log("Reverse Diagonal Pattern Moving !");
             }
             else
             {
-                Debug.Log("Random Pattern Moving !");
+                //Debug.Log("Random Pattern Moving !");
             }
 
 
@@ -542,18 +580,84 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             int index = i * currLevel.gridSize.x + j;
             Grid grid = currLevel.GetGridContainerTrans().GetChild(index).gameObject.GetComponent<Grid>();
-            Debug.Log($"Index {index}, Grid Name : {grid.name}");
+            //Debug.Log($"Index {index}, Grid Name : {grid.name}");
             return grid;
         }
 
-
         void CheckAnswer()
         {
-            string ans = currLevel.touchTextData;
+            string ans = currLevel.touchTextData.ToUpper();
+            bool isCorrect = false;
+            //Debug.Log("Input Data : " + ans);
+            //Debug.Log("Answer List Count : " + answerList.Count);
+            foreach (string str in answerList)
+            {
+                string originalString;
+                string revStr = GetReverseString(str,out originalString);
 
-            //if(ans == || )
+                //Debug.Log("Original Str : " + originalString);
+                QuesGrid quesGrid = currLevel.GetQuesGrid(originalString, revStr);
+
+                if ((originalString == ans || revStr == ans) && !quesGrid.isMarked)
+                {
+                    Debug.Log("Correct !");
+                    currLevel.UpdateQuesList(originalString);
+                    isCorrect = true;
+                    break;
+                }
+            }
+
+            InputDataReset(isCorrect);
+
+            bool isComplete = currLevel.IsAllQuesMarked();
+
+            if (isComplete)
+            {
+                GameController.Instance.NextLevel();
+            }
         }
 
+        public string GetReverseString(string str,out string originalString)
+        {
+            string mainStr = str.ToUpper();
+            char[] revArr = mainStr.ToCharArray();
+            Array.Reverse(revArr);
+            string revStr = new string(revArr).ToUpper();
+            originalString = mainStr;
 
+            //Debug.Log("Str = " + str);
+            //Debug.Log("Reverse Str = " + revStr);
+
+            return revStr;
+        }
+
+        public string GetReverseString(string str)
+        {
+            string mainStr = str.ToUpper();
+            char[] revArr = mainStr.ToCharArray();
+            Array.Reverse(revArr);
+            string revStr = new string(revArr).ToUpper();
+
+            //Debug.Log("Str = " + str);
+            //Debug.Log("Reverse Str = " + revStr);
+
+            return revStr;
+        }
+
+        public void GenerateNewLine()
+        {
+            LineRenderer line = Instantiate(lineRendererPrefab, currLevel.GetLineParentTrans());
+            line.positionCount = 0;
+            line.gameObject.SetActive(false);
+            line.startWidth = currLevel.GetLineRendererWidth();
+            line.endWidth = currLevel.GetLineRendererWidth();
+            Color color = DataHandler.Instance.GetColor();
+            currLevel.SetLineRenderer(line, color);
+        }
+
+        void MarkAnswerFound()
+        {
+
+        }
     }
 }

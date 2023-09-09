@@ -8,9 +8,19 @@ namespace YugantLoyaLibrary.WordSearchGame
     {
         public static DataHandler Instance;
 
+        [SerializeField] List<Color> totalColors = new List<Color>();
+        public int colorIndex = 0;
+
         private void Awake()
         {
             CreateSingleton();
+
+            Init();
+        }
+
+        void Init()
+        {
+
         }
 
         void CreateSingleton()
@@ -23,6 +33,19 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 Destroy(this.gameObject);
             }
+        }
+
+        public Color GetColor()
+        {
+            Color color = totalColors[colorIndex];
+            colorIndex++;
+
+            if(colorIndex >= totalColors.Count)
+            {
+                colorIndex = 0;
+            }
+
+            return color;
         }
 
 

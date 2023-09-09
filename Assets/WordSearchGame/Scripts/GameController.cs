@@ -11,7 +11,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         [Header("References")]
         [SerializeField] UI_Manager ui_Manager;
-        public LevelDataInfo levelDataInfo;
+        [SerializeField] LevelDataInfo levelDataInfo;
         [SerializeField] LevelHandler levelHandler;
         [SerializeField] Transform levelContainer;
         [SerializeField] GameObject levelPrefab;
@@ -32,6 +32,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public enum Direction
         {
+            NONE,
             VERTICAL,
             HORIZONTAL,
             STRAIGHT_DIAGONAL,
@@ -43,15 +44,11 @@ namespace YugantLoyaLibrary.WordSearchGame
         private void Awake()
         {
             CreateSingleton();
-            ClearLevelContainer();
             GameStartInfo();
-            CreateLevel();
+            RestartLevel();
         }
 
-        private void Start()
-        {
-            
-        }
+
 
         void CreateSingleton()
         {
@@ -69,15 +66,18 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             GameObject level = Instantiate(levelPrefab, levelContainer);
             currLevel = level.GetComponent<Level>();
-            AssignLevelData();
             currLevel.AssignLevelHandler(levelHandler);
             levelHandler.AssignLevel(currLevel);
+            levelHandler.Init();
+            AssignLevelData();
         }
 
         private void AssignLevelData()
         {
-            currLevel.gridSize = levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber].gridSize;
-
+            currLevel.gridSize = GetLevelDataInfo().gridSize;
+            ResetData();
+            levelHandler.GetGridData();
+            currLevel.StartInit();
         }
 
         public string GetGridDataOfLevel()
@@ -85,10 +85,15 @@ namespace YugantLoyaLibrary.WordSearchGame
             return levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber].gridData;
         }
 
+        public LevelDataInfo.LevelInfo GetLevelDataInfo()
+        {
+            Debug.Log("Curr Level Num : " + DataHandler.Instance.CurrLevelNumber);
+            return levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber];
+        }
+
         void GameStartInfo()
         {
             DataHandler.Instance.CurrLevelNumber = 0;
-
         }
 
         void ClearLevelContainer()
@@ -110,14 +115,29 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void RestartLevel()
         {
             ClearLevelContainer();
-            CreateLevel();
             ResetData();
+            CreateLevel();
         }
 
         void ResetData()
         {
             levelHandler.inputGridsList.Clear();
             levelHandler.totalGridsList.Clear();
+            levelHandler.answerList.Clear();
+        }
+
+        public void NextLevel()
+        {
+            if (DataHandler.Instance.CurrLevelNumber < levelDataInfo.levelInfo.Count - 1)
+            {
+                DataHandler.Instance.CurrLevelNumber++;
+            }
+            else
+            {
+                DataHandler.Instance.CurrLevelNumber = 0;
+            }
+
+            RestartLevel();
         }
     }
 }

@@ -18,5 +18,15 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             GameController.Instance.RestartLevel();
         }
+
+        public void Next()
+        {
+            GameController.Instance.NextLevel();
+        }
+
+        public void Previous()
+        {
+            GameController.Instance.PreviousLevel();
+        }
     }
 }

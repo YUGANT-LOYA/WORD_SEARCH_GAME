@@ -145,6 +145,20 @@ namespace YugantLoyaLibrary.WordSearchGame
             StartCoroutine(nameof(FadeScreen));
         }
 
+        public void PreviousLevel()
+        {
+            if (DataHandler.Instance.CurrLevelNumber > 0)
+            {
+                DataHandler.Instance.CurrLevelNumber--;
+            }
+            else
+            {
+                DataHandler.Instance.CurrLevelNumber = levelDataInfo.levelInfo.Count - 1;
+            }
+
+            StartCoroutine(nameof(FadeScreen));
+        }
+
         void FadeScreen()
         {
             fadeCanvasGroup.DOFade(1f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
@@ -152,7 +166,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 RestartLevel();
                 fadeCanvasGroup.DOFade(0f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
                 {
-                   
+
                 });
             });
         }

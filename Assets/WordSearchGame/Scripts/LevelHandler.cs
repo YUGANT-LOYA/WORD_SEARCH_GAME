@@ -173,11 +173,11 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                 if (grid != currGrid)
                 {
-                    //Debug.Log("Not Same !");
+
                 }
                 else
                 {
-                    //Debug.Log("Same !");
+
                 }
             }
             return null;

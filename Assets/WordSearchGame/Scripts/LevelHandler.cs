@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -26,7 +27,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         [Header("Level Info")]
         public char[][] gridData;
         public List<Grid> totalGridsList, inputGridsList;
-        public List<string> answerList;
+        public List<LevelDataInfo.WordInfo> wordList;
         public GameController.InputDirection draggingDirection;
         public GameController.Direction mainDir;
         Vector2 inputMousePos;
@@ -58,7 +59,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             canvasGroup = GetComponent<CanvasGroup>();
             totalGridsList = new List<Grid>();
             inputGridsList = new List<Grid>();
-            answerList = new List<string>();
+            wordList = new List<LevelDataInfo.WordInfo>();
         }
 
         public void LevelStartInit()
@@ -68,37 +69,42 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void GetGridData()
         {
-            string data = GameController.Instance.GetGridDataOfLevel();
+            TextAsset levelTextFile = GameController.Instance.GetGridDataOfLevel();
+            string levelData = levelTextFile.text.Trim();
+            //Debug.Log("Level Data String : " + levelData);
             int row = currLevel.gridSize.x;
             int col = currLevel.gridSize.y;
             gridData = new char[row][];
-            string[] lines = data.Split('\n');
+            string[] lines = levelData.Split('\n');
             //Debug.Log("Lines : " + lines.Length);
-            //Debug.Log("Row : " + row);
-            //Debug.Log("Col : " + col);
 
             for (int i = 0; i < row; i++)
             {
                 gridData[i] = new char[col];
-                string str = lines[i];
-                //Debug.Log(str.Length);
-                //Debug.Log("str : " + str);
+                //Debug.Log($"Line {i}  : " + lines[i]);
+
+                // Split the string by comma
+                string[] splitString = lines[i].Split(',');
+
+                // Join the substrings to create a character array without commas
+                string charArrayString = string.Join("", splitString).ToUpper();
+
+                // Convert the character array string to a char array
+                char[] charArray = charArrayString.ToCharArray();
+
                 for (int j = 0; j < col; j++)
                 {
-                    //Debug.Log(str[j]);
-                    gridData[i][j] = str[j];
+                    gridData[i][j] = charArray[j];
                 }
             }
 
-            List<string> ansList = GameController.Instance.GetLevelDataInfo().words;
-            //Debug.Log("Ans List Count : " + ansList.Count);
+            List<LevelDataInfo.WordInfo> list = GameController.Instance.GetLevelDataInfo().words;
 
-            for (int i = 0; i < ansList.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
-                answerList.Add(ansList[i].ToUpper());
+                this.wordList.Add(list[i]);
             }
 
-            //Debug.Log("Level Handler Ans List Count : " + answerList.Count);
         }
 
         public void AssignLevel(Level levelScript)
@@ -297,7 +303,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             inputGridsList.Clear();
             totalGridsList.Clear();
-            answerList.Clear();
+            wordList.Clear();
             mainDir = GameController.Direction.NONE;
         }
 
@@ -477,14 +483,15 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         void CheckAnswer()
         {
-            string ans = currLevel.touchTextData.ToUpper();
+            string ans = currLevel.touchTextData;
             bool isCorrect = false;
             //Debug.Log("Input Data : " + ans);
             //Debug.Log("Answer List Count : " + answerList.Count);
-            foreach (string str in answerList)
+            List<LevelDataInfo.WordInfo> wordInfoList = wordList;
+            for(int i =0;i< wordInfoList.Count;i++)
             {
                 string originalString;
-                string revStr = GetReverseString(str, out originalString);
+                string revStr = GetReverseString(wordInfoList[i].word, out originalString);
 
                 //Debug.Log("Original Str : " + originalString);
                 QuesGrid quesGrid = currLevel.GetQuesGrid(originalString, revStr);
@@ -510,10 +517,10 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public string GetReverseString(string str, out string originalString)
         {
-            string mainStr = str.ToUpper();
+            string mainStr = str;
             char[] revArr = mainStr.ToCharArray();
             Array.Reverse(revArr);
-            string revStr = new string(revArr).ToUpper();
+            string revStr = new string(revArr);
             originalString = mainStr;
 
             //Debug.Log("Str = " + str);
@@ -524,10 +531,10 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public string GetReverseString(string str)
         {
-            string mainStr = str.ToUpper();
+            string mainStr = str;
             char[] revArr = mainStr.ToCharArray();
             Array.Reverse(revArr);
-            string revStr = new string(revArr).ToUpper();
+            string revStr = new string(revArr);
 
             //Debug.Log("Str = " + str);
             //Debug.Log("Reverse Str = " + revStr);

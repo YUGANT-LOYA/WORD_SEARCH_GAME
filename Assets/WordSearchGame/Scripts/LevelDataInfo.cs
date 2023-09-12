@@ -11,10 +11,18 @@ namespace YugantLoyaLibrary.WordSearchGame
         public struct LevelInfo
         {
             public Vector2Int gridSize;
-            [TextArea(10, 10)]
-            public string gridData;
-            public TextAsset gridDataTextFile;
-            public List<string> words;
+            //[TextArea(10, 10)]
+            //public string gridData;
+            public TextAsset level_CSV;
+            public List<WordInfo> words;
+        }
+
+        [System.Serializable]
+        public struct WordInfo
+        {
+            public string word;
+            public Vector2Int firstLetterGridVal;
+            public GameController.InputDirection dir;
         }
 
         public List<LevelInfo> levelInfo;

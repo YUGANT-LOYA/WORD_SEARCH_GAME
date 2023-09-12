@@ -195,7 +195,6 @@ GameObject:
   - component: {fileID: 801419134728346705}
   - component: {fileID: 801419134728346704}
   - component: {fileID: 801419134728346706}
-  - component: {fileID: 5001151067516448625}
   m_Layer: 6
   m_Name: Grid
   m_TagString: Untagged
@@ -275,38 +274,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridText: {fileID: 1826602843}
-  boxCollider2D: {fileID: 5001151067516448625}
+  boxCollider2D: {fileID: 0}
   gridImg: {fileID: 801419134728346704}
-  straightColorGm: {fileID: 0}
-  startColorGm: {fileID: 0}
   isMarked: 0
   isCorrect: 0
   id: {x: 0, y: 0}
-  colorImgSize: {x: 0, y: 0}
-  straightLineWidthOffset: 20
---- !u!61 &5001151067516448625
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 801419134728346710}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0

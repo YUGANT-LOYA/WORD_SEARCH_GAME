@@ -42,7 +42,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             CreateGrid(); 
             SetLineRendererWidth();
             levelHandler.GenerateNewLine();
-            InitQuesList(levelHandler.answerList);
+            InitQuesList(levelHandler.wordList);
         }
 
         public float GetLineRendererWidth()
@@ -152,9 +152,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                     gridScript.gridID = new Vector2Int(i, j);
                     levelHandler.totalGridsList.Add(gridScript);
                     AssignGridData(gridScript, i, j);
-                    //GenerateRandom_ASCII_Code(gridScript);
-                    gridScript.SetBoxColliderSize(currGridWidth / 2, currGridHeight / 2);
-                    //gridScript.SetLineColorTransform(currGridWidth, currGridHeight);
                 }
             }
 
@@ -163,13 +160,6 @@ namespace YugantLoyaLibrary.WordSearchGame
         private void AssignGridData(Grid gridScript, int row, int column)
         {
             gridScript.gridTextData = levelHandler.gridData[row][column].ToString().ToUpper();
-        }
-
-        void GenerateRandom_ASCII_Code(Grid grid)
-        {
-            int randomASCII_Val = Random.Range(065, 091);
-            char letter = (char)randomASCII_Val;
-            grid.gridTextData = letter.ToString();
         }
 
         public void ResetQuesData()
@@ -182,16 +172,16 @@ namespace YugantLoyaLibrary.WordSearchGame
             quesList = new List<QuesGrid>();
         }
 
-        public void InitQuesList(List<string> list)
+        public void InitQuesList(List<LevelDataInfo.WordInfo> wordsList)
         {
             ResetQuesData();
 
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < wordsList.Count; i++)
             {
                 GameObject ques = Instantiate(quesPrefab, quesParentTrans);
                 QuesGrid quesGridScript = ques.GetComponent<QuesGrid>();
                 quesList.Add(quesGridScript);
-                quesGridScript.quesTextData = list[i].ToUpper();
+                quesGridScript.quesTextData = wordsList[i].word;
             }
         }
 

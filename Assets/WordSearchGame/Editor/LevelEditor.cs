@@ -28,7 +28,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                     levelGenerator.gridData = new string[levelGenerator.numRows, levelGenerator.numColumns];
                 }
 
-                // Display input fields for each cell in the gridData
+
                 for (int i = 0; i < levelGenerator.numRows; i++)
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -52,7 +52,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                     {
                         if (string.IsNullOrEmpty(levelGenerator.gridData[i, j]) || string.IsNullOrWhiteSpace(levelGenerator.gridData[i, j]))
                         {
-                            Debug.Log("Is Null or Empty or WhiteSpace !");
+                            //Debug.Log("Is Null or Empty or WhiteSpace !");
                             levelGenerator.validData = false;
                             break;
                         }
@@ -61,10 +61,10 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                 if (levelGenerator.validData)
                 {
-                    Debug.Log("Is Valid !");
+                    //Debug.Log("Is Valid !");
                     if (GUILayout.Button("Finalize Level"))
                     {
-                        Debug.Log("Finalize Level Clicked !");
+                        Debug.Log("Finalizing Level !");
                         ExportDataToCSV(levelGenerator);
                     }
                 }
@@ -73,13 +73,35 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                 if (GUILayout.Button("Clear Data"))
                 {
-                    Debug.Log("Clear Data Clicked !");
+                    Debug.Log("Clearing Data !");
                     for (int i = 0; i < levelGenerator.numRows; i++)
                     {
                         for (int j = 0; j < levelGenerator.numColumns; j++)
                         {
                             levelGenerator.gridData[i, j] = "";
                         }
+                    }
+                    Debug.Log("Data Cleared !");
+                }
+
+
+                GUILayout.Space(5f);
+
+                if (GUILayout.Button("Delete Existing File with Same Name"))
+                {
+                    Debug.Log($"Deleting Level_{levelGenerator.levelNum} file!!");
+                    string assetsFolderPath = Application.dataPath;
+                    string relativeFilePath = $"WordSearchGame/LevelData/Level_{levelGenerator.levelNum}.csv";
+                    string filePath = Path.Combine(assetsFolderPath, relativeFilePath);
+
+                    if(File.Exists(filePath))
+                    {
+                        Debug.Log($"Deleted the file {levelGenerator.levelNum} !");
+                        File.Delete(filePath);
+                    }
+                    else
+                    {
+                        Debug.Log($"No File Exists with this Level_{levelGenerator.levelNum} !");
                     }
                 }
 
@@ -103,7 +125,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 csvContent.AppendLine();
             }
 
-
+            //Asset Folder Path
             string assetsFolderPath = Application.dataPath;
 
             // Specify the relative path within the "Assets" folder where you want to save the CSV file
@@ -112,17 +134,23 @@ namespace YugantLoyaLibrary.WordSearchGame
             // Combine the paths to get the full path of the CSV file
             string filePath = Path.Combine(assetsFolderPath, relativeFilePath);
 
-            // Ensure the directory structure exists
-            if (!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            }
-
             // Save the CSV file
 
-            if (!string.IsNullOrEmpty(filePath))
+            if (!string.IsNullOrEmpty(filePath) && !File.Exists(filePath))
             {
+                Debug.Log("File Creating !!");
                 File.WriteAllText(filePath, csvContent.ToString());
+            }
+            else
+            {
+                Debug.LogError($"File Already Exists with name Level_{levelGenerator.levelNum} !!");
+                return;
+            }
+
+            if (!Directory.Exists(filePath))
+            {
+                Debug.Log("Folder Creating !");
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
             }
 
             // Refresh the Unity Asset Database to make the file visible in the Editor

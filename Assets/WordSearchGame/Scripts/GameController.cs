@@ -25,14 +25,14 @@ namespace YugantLoyaLibrary.WordSearchGame
         public enum InputDirection
         {
             NONE,
+            TOP,
+            BOTTOM,
+            LEFT,
+            RIGHT,
             TOP_LEFT,
             TOP_RIGHT,
             BOTTOM_LEFT,
             BOTTOM_RIGHT,
-            BOTTOM,
-            LEFT,
-            RIGHT,
-            TOP
         }
 
         public enum Direction
@@ -85,9 +85,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             currLevel.StartInit();
         }
 
-        public string GetGridDataOfLevel()
+        public TextAsset GetGridDataOfLevel()
         {
-            return levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber].gridData;
+            return levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber].level_CSV;
         }
 
         public LevelDataInfo.LevelInfo GetLevelDataInfo()
@@ -128,7 +128,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             levelHandler.inputGridsList.Clear();
             levelHandler.totalGridsList.Clear();
-            levelHandler.answerList.Clear();
+            levelHandler.wordList.Clear();
         }
 
         public void NextLevel()

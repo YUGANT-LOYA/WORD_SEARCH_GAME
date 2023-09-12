@@ -10,9 +10,7 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Grid : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI gridText;
-        [SerializeField] BoxCollider2D boxCollider2D;
-        [SerializeField] Image gridImg;
-        public bool isMarked,isCorrect;
+        public bool isMarked;
         [SerializeField] Vector2Int id;
 
         public Vector2Int gridID
@@ -38,14 +36,5 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
-        public void SetBoxColliderSize(float width,float height)
-        {
-            boxCollider2D.size = new Vector2(width, height);
-        }
-
-        public void SetGridColor(Color color)
-        {
-            gridImg.color = color;
-        }
     }
 }

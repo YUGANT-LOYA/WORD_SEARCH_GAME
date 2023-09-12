@@ -35,7 +35,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
-        public Color GetColor()
+        public Color UpdateColor()
         {
             Color color = totalColors[colorIndex];
             colorIndex++;
@@ -48,6 +48,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             return color;
         }
 
+        public Color GetCurrentColor()
+        {
+            Color color = totalColors[colorIndex];
+            return color;
+        }
 
         public int CurrLevelNumber
         {

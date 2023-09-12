@@ -1,9 +1,10 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
@@ -13,21 +14,31 @@ namespace YugantLoyaLibrary.WordSearchGame
         [HideInInspector] public Camera cam;
         [SerializeField] Level currLevel;
         [SerializeField] LineRenderer lineRendererPrefab;
+        [SerializeField] GameObject hintCirclePrefab;
         [SerializeField] Grid currGrid, startingGrid, targetGrid;
         [SerializeField] LayerMask gridLayerMask;
         public RectTransform canvasRectTrans;
-        CanvasGroup canvasGroup;
 
         public delegate void NewLetterDelegate(Grid grid);
         NewLetterDelegate OnNewLetterAddEvent;
         public delegate void GameCompleteDelegate();
         GameCompleteDelegate OnGameCompleteEvent;
 
+        [Serializable]
+        public class LevelWords
+        {
+            public LevelDataInfo.WordInfo wordInfo;
+            public bool isWordMarked;
+
+            //Assigns only after Hint is called.
+            public GameObject hintMarker;
+        }
 
         [Header("Level Info")]
         public char[][] gridData;
+        public float timeToShowHint = 0.5f;
         public List<Grid> totalGridsList, inputGridsList;
-        public List<LevelDataInfo.WordInfo> wordList;
+        public List<LevelWords> wordList;
         public GameController.InputDirection draggingDirection;
         public GameController.Direction mainDir;
         Vector2 inputMousePos;
@@ -56,10 +67,9 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             //Debug.Log("Level Handler Init Called !");
             cam = Camera.main;
-            canvasGroup = GetComponent<CanvasGroup>();
             totalGridsList = new List<Grid>();
             inputGridsList = new List<Grid>();
-            wordList = new List<LevelDataInfo.WordInfo>();
+            wordList = new List<LevelWords>();
         }
 
         public void LevelStartInit()
@@ -102,7 +112,9 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             for (int i = 0; i < list.Count; i++)
             {
-                this.wordList.Add(list[i]);
+                LevelWords levelWords = new LevelWords();
+                levelWords.wordInfo = list[i];
+                this.wordList.Add(levelWords);
             }
 
         }
@@ -272,7 +284,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             if (gridObj != null)
             {
-                gridObj.isMarked = true;
+                gridObj.isCorrect = true;
                 currLevel.touchTextData += gridObj.gridTextData;
                 inputGridsList.Add(gridObj);
             }
@@ -487,11 +499,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             bool isCorrect = false;
             //Debug.Log("Input Data : " + ans);
             //Debug.Log("Answer List Count : " + answerList.Count);
-            List<LevelDataInfo.WordInfo> wordInfoList = wordList;
-            for(int i =0;i< wordInfoList.Count;i++)
+            List<LevelWords> levelWordList = wordList;
+            for (int i = 0; i < levelWordList.Count; i++)
             {
                 string originalString;
-                string revStr = GetReverseString(wordInfoList[i].word, out originalString);
+                string revStr = GetReverseString(levelWordList[i].wordInfo.word, out originalString);
 
                 //Debug.Log("Original Str : " + originalString);
                 QuesGrid quesGrid = currLevel.GetQuesGrid(originalString, revStr);
@@ -499,6 +511,8 @@ namespace YugantLoyaLibrary.WordSearchGame
                 if ((originalString == ans || revStr == ans) && !quesGrid.isMarked)
                 {
                     Debug.Log("Correct !");
+                    levelWordList[i].isWordMarked = true;
+                    RemoveHint(levelWordList[i]);
                     currLevel.UpdateQuesList(originalString);
                     isCorrect = true;
                     break;
@@ -549,7 +563,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             line.gameObject.SetActive(false);
             line.startWidth = currLevel.GetLineRendererWidth();
             line.endWidth = currLevel.GetLineRendererWidth();
-            Color color = DataHandler.Instance.GetColor();
+            Color color = DataHandler.Instance.UpdateColor();
             currLevel.SetLineRenderer(line, color);
         }
 
@@ -560,5 +574,59 @@ namespace YugantLoyaLibrary.WordSearchGame
             GameController.Instance.NextLevel();
         }
 
+        public void ShowHint()
+        {
+            //Debug.Log("Show Hint Called !");
+            Grid hintGrid = null;
+            int index = 0;
+
+            for (int i = 0; i < wordList.Count; i++)
+            {
+                Vector2Int id = wordList[i].wordInfo.firstLetterGridVal;
+                bool isWordMarked = wordList[i].isWordMarked;
+                Grid grid = GetGridByGridID(id.x, id.y);
+
+                if (grid != null)
+                {
+                    if (!isWordMarked)
+                    {
+                        index = i;
+                        wordList[i].isWordMarked = true;
+                        hintGrid = grid;
+                        break;
+                    }
+                }
+                else
+                {
+                    Debug.LogAssertion("Grid Not Found !");
+                }
+            }
+
+
+            if (hintGrid != null)
+            {
+                //Debug.Log("Hint Grid : " + hintGrid);
+                PlayHintAnimation(hintGrid, index);
+            }
+        }
+
+        private void PlayHintAnimation(Grid grid, int index)
+        {
+            GameObject hintObj = Instantiate(hintCirclePrefab, currLevel.GetHintContainer());
+            wordList[index].hintMarker = hintObj;
+            hintObj.transform.position = grid.transform.position;
+            Image hintImg = hintObj.GetComponent<Image>();
+            //Color color = DataHandler.Instance.GetCurrentColor();
+            //hintImg.color = new Color(color.r, color.g, color.b, 255f);
+            hintImg.DOFillAmount(1f, timeToShowHint);
+        }
+
+        void RemoveHint(LevelWords wordList)
+        {
+            if (wordList.isWordMarked)
+            {
+                Destroy(wordList.hintMarker);
+            }
+        }
     }
 }

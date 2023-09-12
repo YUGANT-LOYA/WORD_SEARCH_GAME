@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1305356551717665900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1305356551717665906}
+  - component: {fileID: 1305356551717665901}
+  m_Layer: 0
+  m_Name: DataHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1305356551717665906
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305356551717665900}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1305356551717665901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305356551717665900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d63c616eee17ed408db6b9673a71672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalColors:
+  - {r: 0.38364774, g: 1, b: 0.4247762, a: 0.88235295}
+  - {r: 1, g: 0.37070796, b: 0.30817604, a: 0.88235295}
+  - {r: 0.32704395, g: 1, b: 0.9806617, a: 0.88235295}
+  - {r: 0.35534585, g: 0.4606992, b: 1, a: 0.88235295}
+  - {r: 0.78270316, g: 0.34591186, b: 1, a: 0.88235295}
+  - {r: 0.96609396, g: 1, b: 0.27044016, a: 0.88235295}
+  - {r: 0.56400055, g: 0.25157225, b: 1, a: 0.88235295}
+  - {r: 0.23911235, g: 0.49056602, b: 0.43971035, a: 0.88235295}
+  - {r: 1, g: 0.5695834, b: 0.39308167, a: 0.88235295}
+  - {r: 0.38364774, g: 0.6161638, b: 1, a: 0.88235295}
+  - {r: 1, g: 0.47798735, b: 0.93281585, a: 0.88235295}
+  - {r: 0.38364774, g: 1, b: 0.6147374, a: 0.88235295}
+  - {r: 1, g: 0.36477983, b: 0.6016083, a: 0.88235295}
+  colorIndex: 0

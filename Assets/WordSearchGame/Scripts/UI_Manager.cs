@@ -17,6 +17,8 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void Restart()
         {
             GameController.Instance.RestartLevel();
+
+
         }
 
         public void Next()
@@ -27,6 +29,11 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void Previous()
         {
             GameController.Instance.PreviousLevel();
+        }
+
+        public void UseHint()
+        {
+            GameController.Instance.GetLevelHandler().ShowHint();
         }
     }
 }

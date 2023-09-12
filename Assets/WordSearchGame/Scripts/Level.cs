@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static YugantLoyaLibrary.WordSearchGame.LevelHandler;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
@@ -14,7 +15,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         LevelHandler levelHandler;
         public Vector2Int gridSize;
         [SerializeField] GameObject gridPrefab, quesPrefab;
-        [SerializeField] Transform gridContainer, lineParentTrans, quesParentTrans;
+        [SerializeField] Transform gridContainer, lineParentTrans, quesParentTrans,hintContainer;
         [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
         [SerializeField] LineRenderer lineRenderer;
         float currGridWidth, currGridHeight, lineRendererWidth = 0.4f;
@@ -73,6 +74,10 @@ namespace YugantLoyaLibrary.WordSearchGame
         public LineRenderer GetLineRenderer()
         {
             return lineRenderer;
+        }
+        public Transform GetHintContainer()
+        {
+            return hintContainer;
         }
 
         public void SetLineRenderer(LineRenderer line, Color color)
@@ -172,7 +177,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             quesList = new List<QuesGrid>();
         }
 
-        public void InitQuesList(List<LevelDataInfo.WordInfo> wordsList)
+        public void InitQuesList(List<LevelWords> wordsList)
         {
             ResetQuesData();
 
@@ -181,7 +186,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 GameObject ques = Instantiate(quesPrefab, quesParentTrans);
                 QuesGrid quesGridScript = ques.GetComponent<QuesGrid>();
                 quesList.Add(quesGridScript);
-                quesGridScript.quesTextData = wordsList[i].word;
+                quesGridScript.quesTextData =  wordsList[i].wordInfo.word;
             }
         }
 

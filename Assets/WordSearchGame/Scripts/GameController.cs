@@ -117,6 +117,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             return ui_Manager;
         }
 
+        public LevelHandler GetLevelHandler()
+        {
+            return levelHandler;
+        }
+
         public void RestartLevel()
         {
             ClearLevelContainer();

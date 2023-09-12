@@ -10,7 +10,7 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Grid : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI gridText;
-        public bool isMarked;
+        public bool isCorrect;
         [SerializeField] Vector2Int id;
 
         public Vector2Int gridID

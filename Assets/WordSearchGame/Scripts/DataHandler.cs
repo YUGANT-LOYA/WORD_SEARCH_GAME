@@ -54,6 +54,27 @@ namespace YugantLoyaLibrary.WordSearchGame
             return color;
         }
 
+        public List<Color> PickColors(int numOfColor)
+        {
+            List<Color> colorList = new List<Color>();
+            List<Color> tempColor = new List<Color>(totalColors);
+
+            for(int i = 0;i<numOfColor;i++)
+            {
+                if(tempColor.Count <= 0)
+                {
+                    tempColor = totalColors;
+                }
+
+                int index = Random.Range(0, tempColor.Count);
+                
+                colorList.Add(tempColor[index]);
+                tempColor.Remove(tempColor[index]);
+            }
+
+            return colorList;
+        }
+
         public int CurrLevelNumber
         {
             get

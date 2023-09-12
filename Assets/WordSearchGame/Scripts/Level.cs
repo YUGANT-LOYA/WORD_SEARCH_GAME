@@ -90,7 +90,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void SetLineRendererPoint(int index, Vector2 pos)
         {
             Vector2 canvasMousePos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(levelHandler.canvasRectTrans, pos, levelHandler.cam, out canvasMousePos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(levelHandler.GetRectTransform(), pos, levelHandler.cam, out canvasMousePos);
 
             lineRenderer.SetPosition(index, canvasMousePos);
 

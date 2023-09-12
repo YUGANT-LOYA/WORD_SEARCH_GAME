@@ -84,6 +84,20 @@ namespace YugantLoyaLibrary.WordSearchGame
                     Debug.Log("Data Cleared !");
                 }
 
+                GUILayout.Space(5f);
+
+                if (GUILayout.Button("Fill Grid With Random Data"))
+                {
+                    Debug.Log("Filling Grid With Random Data !");
+                    for (int i = 0; i < levelGenerator.numRows; i++)
+                    {
+                        for (int j = 0; j < levelGenerator.numColumns; j++)
+                        {
+                            levelGenerator.gridData[i, j] = GenerateRandom_ASCII_Code();
+                        }
+                    }
+                    Debug.Log("Grids Filled !");
+                }
 
                 GUILayout.Space(5f);
 
@@ -157,6 +171,14 @@ namespace YugantLoyaLibrary.WordSearchGame
             AssetDatabase.Refresh();
 
             Debug.Log("CSV file saved to: " + filePath);
+        }
+
+        string GenerateRandom_ASCII_Code()
+        {
+            int randomASCII_Val = Random.Range(065, 091);
+            char letter = (char)randomASCII_Val;
+
+            return letter.ToString();
         }
     }
 }

@@ -10,20 +10,6 @@ namespace YugantLoyaLibrary.WordSearchGame
 {
     public class LevelHandler : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
-        [Header("References")]
-        [HideInInspector] public Camera cam;
-        [SerializeField] Level currLevel;
-        [SerializeField] LineRenderer lineRendererPrefab;
-        [SerializeField] GameObject hintCirclePrefab;
-        [SerializeField] Grid currGrid, startingGrid, targetGrid;
-        [SerializeField] LayerMask gridLayerMask;
-        public RectTransform canvasRectTrans;
-
-        public delegate void NewLetterDelegate(Grid grid);
-        NewLetterDelegate OnNewLetterAddEvent;
-        public delegate void GameCompleteDelegate();
-        GameCompleteDelegate OnGameCompleteEvent;
-
         [Serializable]
         public class LevelWords
         {
@@ -34,16 +20,32 @@ namespace YugantLoyaLibrary.WordSearchGame
             public GameObject hintMarker;
         }
 
+
+        [Header("References")]
+        [HideInInspector] public Camera cam;
+        [SerializeField] Level currLevel;
+        [SerializeField] LineRenderer lineRendererPrefab;
+        [SerializeField] GameObject hintCirclePrefab;
+        [SerializeField] Grid currGrid, startingGrid, targetGrid;
+        [SerializeField] LayerMask gridLayerMask;
+        RectTransform levelHandlerRect;
+
+        public delegate void NewLetterDelegate(Grid grid);
+        NewLetterDelegate OnNewLetterAddEvent;
+        public delegate void GameCompleteDelegate();
+        GameCompleteDelegate OnGameCompleteEvent;
+
+
         [Header("Level Info")]
         public char[][] gridData;
         public float timeToShowHint = 0.5f;
+        public List<Color> levelLineColorList = new List<Color>();
         public List<Grid> totalGridsList, inputGridsList;
         public List<LevelWords> wordList;
         public GameController.InputDirection draggingDirection;
         public GameController.Direction mainDir;
-        Vector2 inputMousePos;
         bool isLevelRunning = true;
-
+        [HideInInspector] int colorIndex = 0;
 
         private void OnEnable()
         {
@@ -70,6 +72,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             totalGridsList = new List<Grid>();
             inputGridsList = new List<Grid>();
             wordList = new List<LevelWords>();
+            levelHandlerRect = GetComponent<RectTransform>();
         }
 
         public void LevelStartInit()
@@ -117,11 +120,24 @@ namespace YugantLoyaLibrary.WordSearchGame
                 this.wordList.Add(levelWords);
             }
 
+
+            AssignLevelColors();
+        }
+
+        void AssignLevelColors()
+        {
+            colorIndex = 0;
+            levelLineColorList = DataHandler.Instance.PickColors(wordList.Count);
         }
 
         public void AssignLevel(Level levelScript)
         {
             currLevel = levelScript;
+        }
+
+        public RectTransform GetRectTransform()
+        {
+            return levelHandlerRect;
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -151,7 +167,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                 return;
 
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
-            inputMousePos = Input.mousePosition;
 
             if (currObj != null && startingGrid != null && IsLayerSame(currObj))
             {
@@ -174,7 +189,6 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         void InputStartData(Grid gridScript)
         {
-            inputMousePos = Input.mousePosition;
             startingGrid = gridScript;
             currGrid = startingGrid;
             currLevel.GetLineRenderer().gameObject.SetActive(true);
@@ -308,6 +322,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             else
             {
                 GenerateNewLine();
+                colorIndex++;
             }
         }
 
@@ -563,8 +578,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             line.gameObject.SetActive(false);
             line.startWidth = currLevel.GetLineRendererWidth();
             line.endWidth = currLevel.GetLineRendererWidth();
-            Color color = DataHandler.Instance.UpdateColor();
+            //Debug.Log("Color List Count : " + levelLineColorList.Count);
+            //Debug.Log("Color Index " + colorIndex);
+            Color color = levelLineColorList[colorIndex];
             currLevel.SetLineRenderer(line, color);
+            
         }
 
         private void LevelComplete()

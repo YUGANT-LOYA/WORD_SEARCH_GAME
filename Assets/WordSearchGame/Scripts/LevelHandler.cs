@@ -321,8 +321,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
             else
             {
-                GenerateNewLine();
-                colorIndex++;
+                if (isLevelRunning)
+                {
+                    colorIndex++;
+                    GenerateNewLine();
+                }
             }
         }
 
@@ -534,14 +537,14 @@ namespace YugantLoyaLibrary.WordSearchGame
                 }
             }
 
-            InputDataReset(isCorrect);
-
             bool isComplete = currLevel.IsAllQuesMarked();
 
             if (isComplete)
             {
                 OnGameCompleteEvent?.Invoke();
             }
+
+            InputDataReset(isCorrect);
         }
 
         public string GetReverseString(string str, out string originalString)
@@ -582,13 +585,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             //Debug.Log("Color Index " + colorIndex);
             Color color = levelLineColorList[colorIndex];
             currLevel.SetLineRenderer(line, color);
-            
         }
 
         private void LevelComplete()
         {
             isLevelRunning = false;
-
             GameController.Instance.NextLevel();
         }
 

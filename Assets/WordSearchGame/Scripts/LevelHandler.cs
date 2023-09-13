@@ -192,7 +192,8 @@ namespace YugantLoyaLibrary.WordSearchGame
             startingGrid = gridScript;
             currGrid = startingGrid;
             currLevel.GetLineRenderer().gameObject.SetActive(true);
-            SetLinePoints(1, 0, startingGrid);
+            SetLinePoints(1, 0, startingGrid); 
+            SetLinePoints(2, 1, startingGrid);
             OnNewLetterAddEvent?.Invoke(gridScript);
         }
 
@@ -516,7 +517,6 @@ namespace YugantLoyaLibrary.WordSearchGame
             string ans = currLevel.touchTextData;
             bool isCorrect = false;
             //Debug.Log("Input Data : " + ans);
-            //Debug.Log("Answer List Count : " + answerList.Count);
             List<LevelWords> levelWordList = wordList;
             for (int i = 0; i < levelWordList.Count; i++)
             {
@@ -524,11 +524,12 @@ namespace YugantLoyaLibrary.WordSearchGame
                 string revStr = GetReverseString(levelWordList[i].wordInfo.word, out originalString);
 
                 //Debug.Log("Original Str : " + originalString);
+                //Debug.Log("Rev Str : " + revStr);
                 QuesGrid quesGrid = currLevel.GetQuesGrid(originalString, revStr);
 
-                if ((originalString == ans || revStr == ans) && !quesGrid.isMarked)
+                if ((originalString == ans || revStr == ans) && quesGrid != null && !quesGrid.isMarked)
                 {
-                    Debug.Log("Correct !");
+                    //Debug.Log("Correct !");
                     levelWordList[i].isWordMarked = true;
                     RemoveHint(levelWordList[i]);
                     currLevel.UpdateQuesList(originalString);
@@ -549,11 +550,10 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public string GetReverseString(string str, out string originalString)
         {
-            string mainStr = str;
-            char[] revArr = mainStr.ToCharArray();
+            char[] revArr = str.ToCharArray();
             Array.Reverse(revArr);
             string revStr = new string(revArr);
-            originalString = mainStr;
+            originalString = str;
 
             //Debug.Log("Str = " + str);
             //Debug.Log("Reverse Str = " + revStr);

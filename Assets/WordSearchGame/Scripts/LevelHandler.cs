@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
@@ -38,7 +39,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         [Header("Level Info")]
         public char[][] gridData;
-        public float timeToShowHint = 0.5f;
+        public float timeToShowHint = 0.5f, timeToRotateGrid = 0.5f;
         public List<Color> levelLineColorList = new List<Color>();
         public List<Grid> totalGridsList, inputGridsList;
         public List<LevelWords> wordList;
@@ -130,6 +131,12 @@ namespace YugantLoyaLibrary.WordSearchGame
             levelLineColorList = DataHandler.Instance.PickColors(wordList.Count);
         }
 
+
+        public void SetLevelRunningBool(bool canTouch)
+        {
+            isLevelRunning = canTouch;
+        }
+
         public void AssignLevel(Level levelScript)
         {
             currLevel = levelScript;
@@ -147,17 +154,20 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
 
+            //Debug.Log("Curr Obj : " + currObj.name,currObj);
+
             if (currObj != null)
             {
-                Grid gridScript = currObj.GetComponent<Grid>();
+                Grid grid = currObj.GetComponent<Grid>();
 
-                if (IsLayerSame(currObj) && !IsGridExistInList(gridScript))
+                if (IsLayerSame(currObj) && !IsGridExistInList(grid))
                 {
                     //Debug.Log("GameObj : " + eventData.pointerCurrentRaycast.gameObject);
-                    InputStartData(gridScript);
+                    //Debug.Log("Mouse Pos : " + Input.mousePosition);
+                    InputStartData(grid);
                 }
+           
             }
-
 
         }
 
@@ -167,6 +177,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 return;
 
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
+            Debug.Log("Dragging Obj : " + currObj.name, currObj);
 
             if (currObj != null && startingGrid != null && IsLayerSame(currObj))
             {
@@ -192,7 +203,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             startingGrid = gridScript;
             currGrid = startingGrid;
             currLevel.GetLineRenderer().gameObject.SetActive(true);
-            SetLinePoints(1, 0, startingGrid); 
+            SetLinePoints(1, 0, startingGrid);
             SetLinePoints(2, 1, startingGrid);
             OnNewLetterAddEvent?.Invoke(gridScript);
         }
@@ -219,9 +230,13 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void SetLinePoints(int totalPoints, int index, Grid grid)
         {
             currLevel.GetLineRenderer().positionCount = totalPoints;
-            Vector2 pos = ConvertTransformToMousePos(grid.transform.position);
 
-            currLevel.SetLineRendererPoint(index, pos);
+            //Vector2 worldPos = grid.transform.TransformPoint(grid.transform.position);
+
+            Vector2 mousePos = ConvertTransformToMousePos(grid.transform.position);
+
+            //Debug.Log("Line Mouse Pos : " + mousePos);
+            currLevel.SetLineRendererPoint(index, mousePos);
         }
 
         private Vector3 ConvertMouseToLineRendererPoint(Vector3 mousePosition)

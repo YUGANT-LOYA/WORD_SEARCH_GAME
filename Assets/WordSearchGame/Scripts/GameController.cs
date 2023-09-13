@@ -53,7 +53,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         private void Start()
         {
             GameStartInfo();
-            RestartLevel();
+            StartGame();
         }
 
         void CreateSingleton()
@@ -117,16 +117,26 @@ namespace YugantLoyaLibrary.WordSearchGame
             return ui_Manager;
         }
 
+        public Level GetCurrentLevel()
+        {
+            return currLevel;
+        }
+
         public LevelHandler GetLevelHandler()
         {
             return levelHandler;
         }
 
-        public void RestartLevel()
+        public void StartGame()
         {
             ClearLevelContainer();
             ResetData();
             CreateLevel();
+        }
+
+        public void RestartLevel()
+        {
+
         }
 
         void ResetData()
@@ -168,7 +178,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             fadeCanvasGroup.DOFade(1f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
             {
-                RestartLevel();
+                StartGame();
                 fadeCanvasGroup.DOFade(0f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
                 {
 

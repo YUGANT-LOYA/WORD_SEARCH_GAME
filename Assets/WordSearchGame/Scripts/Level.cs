@@ -12,8 +12,10 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Level : MonoBehaviour
     {
         [Header("Main Info")]
+        public Vector2 lineOffset;
         LevelHandler levelHandler;
         public Vector2Int gridSize;
+        public Transform rotationContainer,midPanelContainerTrans;
         [SerializeField] GameObject gridPrefab, quesPrefab;
         [SerializeField] Transform gridContainer, lineParentTrans, quesParentTrans,hintContainer;
         [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
@@ -42,6 +44,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             SetGridSize();
             CreateGrid(); 
             SetLineRendererWidth();
+
             levelHandler.GenerateNewLine();
             InitQuesList(levelHandler.wordList);
         }
@@ -64,6 +67,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
 
             lineRendererWidth = size / 250f;
+
+            lineOffset = midPanelContainerTrans.GetComponent<RectTransform>().anchoredPosition;
+            Debug.Log("Line Offset : " + lineOffset);
         }
 
         public Transform GetLineParentTrans()
@@ -87,11 +93,15 @@ namespace YugantLoyaLibrary.WordSearchGame
             lineRenderer.endColor = color;
         }
 
-        public void SetLineRendererPoint(int index, Vector2 pos)
+        public void SetLineRendererPoint(int index, Vector2 mousePos)
         {
             Vector2 canvasMousePos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(levelHandler.GetRectTransform(), pos, levelHandler.cam, out canvasMousePos);
 
+            RectTransform gridRect = gridContainer.GetComponent<RectTransform>();
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(gridRect, mousePos, levelHandler.cam, out canvasMousePos);
+
+            // Set the position in the LineRenderer
             lineRenderer.SetPosition(index, canvasMousePos);
 
         }
@@ -131,11 +141,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             float height = gridContainer.GetComponent<RectTransform>().sizeDelta.y;
 
             //Debug.Log($"Width : {width} , Height : {height}");
-            float spacingX = (gridSize.x - 1) * gridContainerLayoutGroup.spacing.x;
-            float spacingY = (gridSize.y - 1) * gridContainerLayoutGroup.spacing.y;
+            float spacingX = (gridSize.y - 1) * gridContainerLayoutGroup.spacing.y;
+            float spacingY = (gridSize.x - 1) * gridContainerLayoutGroup.spacing.x;
 
-            float gridWidth = (float)(width - spacingX) / (float)(gridSize.x);
-            float gridHeight = (float)(height - spacingY) / (float)(gridSize.y);
+            float gridWidth = (float)(width - spacingX) / (float)(gridSize.y);
+            float gridHeight = (float)(height - spacingY) / (float)(gridSize.x);
 
             currGridWidth = gridWidth;
             currGridHeight = gridHeight;

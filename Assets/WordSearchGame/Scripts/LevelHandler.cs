@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
@@ -21,6 +20,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             public GameObject hintMarker;
         }
 
+        public delegate void NewLetterDelegate(Grid grid);
+        NewLetterDelegate OnNewLetterAddEvent;
+        public delegate void GameCompleteDelegate();
+        GameCompleteDelegate OnGameCompleteEvent;
+
 
         [Header("References")]
         [HideInInspector] public Camera cam;
@@ -30,12 +34,13 @@ namespace YugantLoyaLibrary.WordSearchGame
         [SerializeField] Grid currGrid, startingGrid, targetGrid;
         [SerializeField] LayerMask gridLayerMask;
         RectTransform levelHandlerRect;
+        public int showGridTillLevel = 4;
 
-        public delegate void NewLetterDelegate(Grid grid);
-        NewLetterDelegate OnNewLetterAddEvent;
-        public delegate void GameCompleteDelegate();
-        GameCompleteDelegate OnGameCompleteEvent;
 
+        
+
+
+        
 
         [Header("Level Info")]
         public char[][] gridData;
@@ -177,14 +182,17 @@ namespace YugantLoyaLibrary.WordSearchGame
                 return;
 
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
-            Debug.Log("Dragging Obj : " + currObj.name, currObj);
-
-            if (currObj != null && startingGrid != null && IsLayerSame(currObj))
+            
+            if (currObj != null)
             {
-                Grid gridScript = currObj.GetComponent<Grid>();
-                currGrid = gridScript;
+                //Debug.Log("Dragging Obj : " + currObj.name, currObj);
+                if (startingGrid != null && IsLayerSame(currObj))
+                {
+                    Grid gridScript = currObj.GetComponent<Grid>();
+                    currGrid = gridScript;
 
-                SetTargetGrid();
+                    SetTargetGrid();
+                }
             }
         }
 

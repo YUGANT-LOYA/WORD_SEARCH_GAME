@@ -244,14 +244,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 1181801693, guid: 4df60a9e4a3afd84caae39b7d9dba94f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -274,5 +274,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridText: {fileID: 1826602843}
+  gridBg: {fileID: 801419134728346704}
   isCorrect: 0
   id: {x: 0, y: 0}

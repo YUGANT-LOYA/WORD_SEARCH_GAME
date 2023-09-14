@@ -10,6 +10,7 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Grid : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI gridText;
+        public Image gridBg;
         public bool isCorrect;
         [SerializeField] Vector2Int id;
 
@@ -34,6 +35,12 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 gridText.text = value;
             }
+        }
+
+        public void SetGridBg(bool isActive)
+        {
+            Color gridColor = gridBg.color;
+            gridBg.color = isActive ? new Color(gridColor.r,gridColor.g,gridColor.b,255f) : new Color(gridColor.r, gridColor.g, gridColor.b, 0f);
         }
 
     }

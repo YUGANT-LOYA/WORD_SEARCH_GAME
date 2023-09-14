@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,18 +13,20 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class Level : MonoBehaviour
     {
         [Header("Main Info")]
-        public Vector2 lineOffset;
+        //public Vector2 lineOffset;
         LevelHandler levelHandler;
         public Vector2Int gridSize;
-        public Transform rotationContainer,midPanelContainerTrans;
+        [SerializeField] Button restartButton, hintButton;
+        public Transform rotationContainer, midPanelContainerTrans;
         [SerializeField] GameObject gridPrefab, quesPrefab;
-        [SerializeField] Transform gridContainer, lineParentTrans, quesParentTrans,hintContainer;
+        [SerializeField] Transform gridContainer, lineParentTrans, quesParentTrans, hintContainer;
         [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
         [SerializeField] LineRenderer lineRenderer;
         float currGridWidth, currGridHeight, lineRendererWidth = 0.4f;
         List<QuesGrid> quesList;
         [Header("Input Data Info")]
-        public TextMeshProUGUI touchText;
+        [SerializeField] TextMeshProUGUI touchText, levelNumText;
+
         public string touchTextData
         {
             get
@@ -36,17 +39,35 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
+        public string levelNumData
+        {
+            get
+            {
+                return levelNumText.text;
+            }
+            set
+            {
+                levelNumText.text = value;
+            }
+        }
 
         public void StartInit()
         {
             //Debug.Log("Level StartInit Called !");
             SetGridLayout();
             SetGridSize();
-            CreateGrid(); 
+            CreateGrid();
             SetLineRendererWidth();
-
             levelHandler.GenerateNewLine();
             InitQuesList(levelHandler.wordList);
+            levelNumData = $"Level {DataHandler.Instance.CurrLevelNumber + 1}";
+        }
+
+        public void FillData(LevelHandler handler)
+        {
+            AssignLevelHandler(handler);
+            restartButton.onClick.AddListener(() => { GameController.Instance.RestartLevel(); });
+            hintButton.onClick.AddListener(() => { levelHandler.ShowHint(); });
         }
 
         public float GetLineRendererWidth()
@@ -68,8 +89,8 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             lineRendererWidth = size / 250f;
 
-            lineOffset = midPanelContainerTrans.GetComponent<RectTransform>().anchoredPosition;
-            Debug.Log("Line Offset : " + lineOffset);
+            //lineOffset = midPanelContainerTrans.GetComponent<RectTransform>().anchoredPosition;
+            //Debug.Log("Line Offset : " + lineOffset);
         }
 
         public Transform GetLineParentTrans()
@@ -81,6 +102,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             return lineRenderer;
         }
+
         public Transform GetHintContainer()
         {
             return hintContainer;
@@ -167,6 +189,21 @@ namespace YugantLoyaLibrary.WordSearchGame
                     gridScript.gridID = new Vector2Int(i, j);
                     levelHandler.totalGridsList.Add(gridScript);
                     AssignGridData(gridScript, i, j);
+
+                   
+                    
+                    if (DataHandler.Instance.CurrLevelNumber < levelHandler.showGridTillLevel)
+                    {
+                        Image gridContainerImg = gridContainer.GetComponent<Image>();
+                        Color color = gridContainerImg.color;
+                        gridContainerImg.color = new Color(color.r, color.g, color.b,0f);
+                        gridContainerLayoutGroup.spacing = new Vector2(10f, 10f);
+                        gridScript.SetGridBg(true);
+                    }
+                    else
+                    {
+                        gridScript.SetGridBg(false);
+                    }
                 }
             }
 
@@ -196,7 +233,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 GameObject ques = Instantiate(quesPrefab, quesParentTrans);
                 QuesGrid quesGridScript = ques.GetComponent<QuesGrid>();
                 quesList.Add(quesGridScript);
-                quesGridScript.quesTextData =  wordsList[i].wordInfo.word;
+                quesGridScript.quesTextData = wordsList[i].wordInfo.word;
             }
         }
 
@@ -213,11 +250,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
-        public QuesGrid GetQuesGrid(string ans,string revStr)
+        public QuesGrid GetQuesGrid(string ans, string revStr)
         {
-            foreach(QuesGrid quesGrid in quesList)
+            foreach (QuesGrid quesGrid in quesList)
             {
-                if(quesGrid.quesTextData == ans || quesGrid.quesTextData == revStr)
+                if (quesGrid.quesTextData == ans || quesGrid.quesTextData == revStr)
                 {
                     return quesGrid;
                 }

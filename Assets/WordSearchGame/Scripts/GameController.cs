@@ -18,7 +18,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         [SerializeField] GameObject levelPrefab;
         [SerializeField] CanvasGroup fadeCanvasGroup;
         Level currLevel;
-
+        bool isRestarting;
 
         [SerializeField] float timeToSwitchToNextLevel = 1f;
 
@@ -77,7 +77,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void AssignLevelData()
         {
-            currLevel.AssignLevelHandler(levelHandler);
+            currLevel.FillData(levelHandler);
             levelHandler.AssignLevel(currLevel);
             levelHandler.LevelStartInit();
             currLevel.gridSize = GetLevelDataInfo().gridSize;
@@ -136,7 +136,65 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void RestartLevel()
         {
+            if (isRestarting)
+                return;
 
+            //StartGame();
+            isRestarting = true;
+            RotateGridContainer();
+        }
+
+        public void RotateGridContainer()
+        {
+            Transform trans = currLevel.rotationContainer;
+            levelHandler.SetLevelRunningBool(false);
+            Transform gridContainer = currLevel.GetGridContainerTrans();
+
+           
+
+            if (currLevel.gridSize.y == currLevel.gridSize.x)
+            {
+                Debug.Log("Rotate If !");
+                trans.DOScale(0.8f, levelHandler.timeToRotateGrid/2).OnComplete(() =>
+                {
+                    trans.DOScale(1f, levelHandler.timeToRotateGrid/2);
+                });
+
+                trans.DORotate(new Vector3(trans.localRotation.eulerAngles.x, trans.localRotation.eulerAngles.y, trans.localRotation.eulerAngles.z + 90f), levelHandler.timeToRotateGrid).OnComplete(() =>
+                {
+                    isRestarting = false;
+                    levelHandler.SetLevelRunningBool(true);
+                });
+
+                for (int i = 0; i < gridContainer.childCount; i++)
+                {
+                    GameObject gm = gridContainer.GetChild(i).gameObject;
+
+                    gm.transform.DOLocalRotate(new Vector3(gm.transform.localRotation.eulerAngles.x, gm.transform.localRotation.eulerAngles.y, gm.transform.localRotation.eulerAngles.z-90f), levelHandler.timeToRotateGrid);
+                }
+            }
+            else
+            {
+                Debug.Log("Rotate Else !");
+
+                trans.DOScale(0.8f, levelHandler.timeToRotateGrid).OnComplete(() =>
+                {
+                    trans.DOScale(1f, levelHandler.timeToRotateGrid);
+                });
+
+                trans.DORotate(new Vector3(trans.localRotation.eulerAngles.x, trans.localRotation.eulerAngles.y, trans.localRotation.eulerAngles.z + 180f), levelHandler.timeToRotateGrid * 2).OnComplete(() =>
+                {
+                    isRestarting = false;
+                    levelHandler.SetLevelRunningBool(true);
+                });
+
+                for (int i = 0; i < gridContainer.childCount; i++)
+                {
+                    GameObject gm = gridContainer.GetChild(i).gameObject;
+
+                    gm.transform.DOLocalRotate(new Vector3(gm.transform.localRotation.eulerAngles.x, gm.transform.localRotation.eulerAngles.y, gm.transform.localRotation.eulerAngles.z - 180f), levelHandler.timeToRotateGrid * 2);
+                }
+            }
         }
 
         void ResetData()

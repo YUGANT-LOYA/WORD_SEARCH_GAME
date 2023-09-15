@@ -375,8 +375,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d602c4178bc289340b1a6d1adb923d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prevButton: {fileID: 0}
-  nextButton: {fileID: 0}
+  prevButton: {fileID: 1432210750}
+  nextButton: {fileID: 927706961}
 --- !u!1 &927706959
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,6 +1193,7 @@ MonoBehaviour:
   gridLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  showGridTillLevel: 4
   timeToShowHint: 0.5
   timeToRotateGrid: 0.5
   levelLineColorList: []
@@ -1268,10 +1269,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c5e1dae06ef5054699be73d3684dbfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelNum: 26
-  numRows: 5
-  numColumns: 5
-  validData: 1
+  levelNum: 32
+  levelDataInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
+  wordList: []
+  numRows: 8
+  numColumns: 8
+  letterIndex: 0
+  validData: 0
+  directions: 0100000002000000030000000400000005000000060000000700000008000000
+  currCheckingGrid: {x: 0, y: 0}
+  levelData:
+    gridSize: {x: 0, y: 0}
+    level_CSV: {fileID: 0}
+    words: []
+  dataInfo:
+    gridSize: {x: 8, y: 8}
+    level_CSV: {fileID: 0}
+    words: []
 --- !u!4 &1751739562
 Transform:
   m_ObjectHideFlags: 0

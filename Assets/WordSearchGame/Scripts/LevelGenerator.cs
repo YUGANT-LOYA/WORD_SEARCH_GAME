@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -22,7 +21,8 @@ namespace YugantLoyaLibrary.WordSearchGame
         public bool validData = true;
         [Tooltip("All Directions in which words will can be marked and will find the word inside the Grid")]
         public GameController.InputDirection[] directions;
-        GameController.InputDirection matchingDir;
+
+        private GameController.InputDirection _matchingDir;
         public Vector2Int currCheckingGrid;
         [Tooltip("Data that is filled by Level Generator and filled in Scriptable Object")]
         public LevelDataInfo.LevelInfo levelData;
@@ -114,7 +114,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             Vector2Int wordMatchingGridID = Vector2Int.one * -1;
 
             Debug.Log("New Word Finding !");
-            matchingDir = GameController.InputDirection.NONE;
+            _matchingDir = GameController.InputDirection.NONE;
 
             for (int i = currCheckingGrid.x; i < gridData.GetLength(0); i++)
             {
@@ -143,16 +143,16 @@ namespace YugantLoyaLibrary.WordSearchGame
                                 Debug.Log("Temp Index : " + tempLetterIndex);
                                 if (tempLetterIndex != -1)
                                 {
-                                    matchingDir = directions[k];
+                                    _matchingDir = directions[k];
 
-                                    Debug.Log("Matching Dir : " + matchingDir);
+                                    Debug.Log("Matching Dir : " + _matchingDir);
                                     int index = tempLetterIndex;
                                     MatchLetterInCurrDirection(word, newIndex, out wordFound, index, out tempLetterIndex);
 
                                     if (wordFound)
                                     {
                                         Debug.Log("Word Found : " + wordFound);
-                                        dir = matchingDir;
+                                        dir = _matchingDir;
                                         return wordMatchingGridID;
                                     }
                                     else
@@ -172,7 +172,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 }
             }
 
-            dir = matchingDir;
+            dir = _matchingDir;
             wordMatchingGridID = Vector2Int.one * -1;
             return wordMatchingGridID;
         }
@@ -308,7 +308,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 //Debug.Log("Letter Index : " + tempLetterIndex); 
                 string letter = word[tempLetterIndex].ToString().ToUpper();
 
-                switch (matchingDir)
+                switch (_matchingDir)
                 {
                     case GameController.InputDirection.TOP:
 

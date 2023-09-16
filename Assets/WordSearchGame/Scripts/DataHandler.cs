@@ -8,8 +8,18 @@ namespace YugantLoyaLibrary.WordSearchGame
     {
         public static DataHandler Instance;
 
+        [Header("Prefab Holders")]
+        public GameObject coinPrefab;
+        public GameObject levelPrefab;
+        public LineRenderer lineRendererPrefab;
+        public GameObject hintCirclePrefab;
+
+        [Header("Data Info")]
         [SerializeField] List<Color> totalColors = new List<Color>();
+        [Tooltip("When player first time start playing, Initial coins player have")]
+        public int initial_Coins = 300;
         public int colorIndex = 0;
+
 
         private void Awake()
         {
@@ -84,6 +94,18 @@ namespace YugantLoyaLibrary.WordSearchGame
             set
             {
                 PlayerPrefs.SetInt(StringHelper.LEVEL_NUM, value);
+            }
+        }
+
+        public int TotalCoin
+        {
+            get
+            {
+                return PlayerPrefs.GetInt(StringHelper.COIN_AVAIL, initial_Coins);
+            }
+            set
+            {
+                PlayerPrefs.SetInt(StringHelper.COIN_AVAIL, value);
             }
         }
     }

@@ -164,7 +164,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                     if (GUILayout.Button("Finalize Level"))
                     {
                         Debug.Log("Finalizing Level !");
-                        string filePath = levelGenerator.ExportDataToCSV(levelGenerator);
+                        string filePath = levelGenerator.ExportDataToCsv(levelGenerator);
 
                         if (filePath != null)
                         {
@@ -244,7 +244,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                     if (GUILayout.Button("Retrieve Data From CSV "))
                     {
                         Debug.Log("Retriving Data !");
-                        levelGenerator.FillDataFromCSV(levelGenerator);
+                        levelGenerator.FillDataFromCsv(levelGenerator);
                     }
                 }
 

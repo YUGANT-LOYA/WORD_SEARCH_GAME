@@ -66,7 +66,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void FillData(LevelHandler handler)
         {
             AssignLevelHandler(handler);
-            restartButton.onClick.AddListener(() => { GameController.Instance.RestartLevel(); });
+            restartButton.onClick.AddListener(() => { GameController.instance.RestartLevel(); });
             hintButton.onClick.AddListener(() => { levelHandler.ShowHint(); });
         }
 

@@ -17,11 +17,11 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void PrevLevel()
         {
-            GameController.Instance.PreviousLevel();
+            GameController.instance.PreviousLevel();
         }
         public void NextLevel()
         {
-            GameController.Instance.NextLevel();
+            GameController.instance.NextLevel();
         }
     }
 }

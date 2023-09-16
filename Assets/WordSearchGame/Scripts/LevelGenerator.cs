@@ -15,13 +15,12 @@ namespace YugantLoyaLibrary.WordSearchGame
         public List<string> wordList = new List<string>();
         public int numRows;
         public int numColumns;
-        public int letterIndex = 0;
+        public int letterIndex;
         [Tooltip("Fill The Grid With Data")]
         public string[,] gridData;
         public bool validData = true;
         [Tooltip("All Directions in which words will can be marked and will find the word inside the Grid")]
         public GameController.InputDirection[] directions;
-
         private GameController.InputDirection _matchingDir;
         public Vector2Int currCheckingGrid;
         [Tooltip("Data that is filled by Level Generator and filled in Scriptable Object")]
@@ -39,7 +38,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         }
 
 #if UNITY_EDITOR
-        public string ExportDataToCSV(LevelGenerator levelGenerator)
+        public string ExportDataToCsv(LevelGenerator levelGenerator)
         {
             string[,] data = levelGenerator.gridData;
             StringBuilder csvContent = new StringBuilder();
@@ -103,15 +102,15 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public string GenerateRandom_ASCII_Code()
         {
-            int randomASCII_Val = Random.Range(065, 091);
-            char letter = (char)randomASCII_Val;
+            int randomAsciiVal = Random.Range(065, 091);
+            char letter = (char)randomAsciiVal;
 
             return letter.ToString();
         }
 
         public Vector2Int FindWord(string word, out GameController.InputDirection dir)
         {
-            Vector2Int wordMatchingGridID = Vector2Int.one * -1;
+            Vector2Int wordMatchingGridID;
 
             Debug.Log("New Word Finding !");
             _matchingDir = GameController.InputDirection.NONE;
@@ -124,16 +123,10 @@ namespace YugantLoyaLibrary.WordSearchGame
                     {
                         Debug.Log($"Letter {letterIndex} : {word[letterIndex]}");
                         wordMatchingGridID = new Vector2Int(i, j);
-                        bool wordFound = false;
                         int tempLetterIndex = letterIndex;
                         for (int k = 0; k < directions.Length; k++)
                         {
-                            if (wordFound)
-                                continue;
-
-                            wordFound = false;
-                            Vector2Int newIndex;
-                            bool isAvail = CheckDirection(i, j, directions[k], out newIndex);
+                            bool isAvail = CheckDirection(i, j, directions[k], out var newIndex);
                             Debug.Log($"I : {i} , J : {j}");
                             Debug.Log($"K {k} : {isAvail}");
                             Debug.Log($"DIR : {directions[k]}");
@@ -147,11 +140,11 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                                     Debug.Log("Matching Dir : " + _matchingDir);
                                     int index = tempLetterIndex;
-                                    MatchLetterInCurrDirection(word, newIndex, out wordFound, index, out tempLetterIndex);
+                                    MatchLetterInCurrDirection(word, newIndex, out var wordFound, index, out tempLetterIndex);
 
                                     if (wordFound)
                                     {
-                                        Debug.Log("Word Found : " + wordFound);
+                                        Debug.Log("Word Found : " + true);
                                         dir = _matchingDir;
                                         return wordMatchingGridID;
                                     }
@@ -471,13 +464,13 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         }
 #endif
-        public void FillDataFromCSV(LevelGenerator levelGenerator)
+        public void FillDataFromCsv(LevelGenerator levelGenerator)
         {
             TextAsset levelTextFile = levelGenerator.retrieveDatafile;
-            string levelData = levelTextFile.text.Trim();
-            Debug.Log("Level Data String : " + levelData);
+            string data = levelTextFile.text.Trim();
+            Debug.Log("Level Data String : " + data);
 
-            string[] lines = levelData.Split('\n');
+            string[] lines = data.Split('\n');
             Debug.Log("Lines : " + lines.Length);
 
             for (int i = 0; i < lines.Length; i++)

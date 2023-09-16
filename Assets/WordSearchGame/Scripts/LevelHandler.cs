@@ -1,6 +1,5 @@
 using DG.Tweening;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,20 +19,19 @@ namespace YugantLoyaLibrary.WordSearchGame
             public GameObject hintMarker;
         }
 
-        public delegate void NewLetterDelegate(Grid grid);
-        NewLetterDelegate OnNewLetterAddEvent;
+        private delegate void NewLetterDelegate(Grid grid);
+
+        private NewLetterDelegate _onNewLetterAddEvent;
         public delegate void GameCompleteDelegate();
-        GameCompleteDelegate OnGameCompleteEvent;
+        public GameCompleteDelegate onGameCompleteEvent;
 
 
         [Header("References")]
         [HideInInspector] public Camera cam;
         [SerializeField] Level currLevel;
-        [SerializeField] LineRenderer lineRendererPrefab;
-        [SerializeField] GameObject hintCirclePrefab;
         [SerializeField] Grid currGrid, startingGrid, targetGrid;
         [SerializeField] LayerMask gridLayerMask;
-        RectTransform levelHandlerRect;
+        RectTransform _levelHandlerRect;
         public int showGridTillLevel = 4;
 
 
@@ -48,22 +46,21 @@ namespace YugantLoyaLibrary.WordSearchGame
         public List<Color> levelLineColorList = new List<Color>();
         public List<Grid> totalGridsList, inputGridsList;
         public List<LevelWords> wordList;
-        public GameController.InputDirection draggingDirection;
         public GameController.Direction mainDir;
-        bool isLevelRunning = true;
-        [HideInInspector] int colorIndex = 0;
+        bool _isLevelRunning = true;
+        private int _colorIndex;
 
         private void OnEnable()
         {
-            OnNewLetterAddEvent += AddNewLetter;
-            OnGameCompleteEvent += LevelComplete;
+            _onNewLetterAddEvent += AddNewLetter;
+            onGameCompleteEvent += LevelComplete;
 
         }
 
         private void OnDisable()
         {
-            OnNewLetterAddEvent -= AddNewLetter;
-            OnGameCompleteEvent -= LevelComplete;
+            _onNewLetterAddEvent -= AddNewLetter;
+            onGameCompleteEvent -= LevelComplete;
         }
 
         private void Awake()
@@ -78,17 +75,17 @@ namespace YugantLoyaLibrary.WordSearchGame
             totalGridsList = new List<Grid>();
             inputGridsList = new List<Grid>();
             wordList = new List<LevelWords>();
-            levelHandlerRect = GetComponent<RectTransform>();
+            _levelHandlerRect = GetComponent<RectTransform>();
         }
 
         public void LevelStartInit()
         {
-            isLevelRunning = true;
+            _isLevelRunning = true;
         }
 
         public void GetGridData()
         {
-            TextAsset levelTextFile = GameController.Instance.GetGridDataOfLevel();
+            TextAsset levelTextFile = GameController.instance.GetGridDataOfLevel();
             string levelData = levelTextFile.text.Trim();
             //Debug.Log("Level Data String : " + levelData);
             int row = currLevel.gridSize.x;
@@ -117,12 +114,14 @@ namespace YugantLoyaLibrary.WordSearchGame
                 }
             }
 
-            List<LevelDataInfo.WordInfo> list = GameController.Instance.GetLevelDataInfo().words;
+            List<LevelDataInfo.WordInfo> list = GameController.instance.GetLevelDataInfo().words;
 
-            for (int i = 0; i < list.Count; i++)
+            foreach (var word in list)
             {
-                LevelWords levelWords = new LevelWords();
-                levelWords.wordInfo = list[i];
+                LevelWords levelWords = new LevelWords
+                {
+                    wordInfo = word
+                };
                 this.wordList.Add(levelWords);
             }
 
@@ -130,16 +129,15 @@ namespace YugantLoyaLibrary.WordSearchGame
             AssignLevelColors();
         }
 
-        void AssignLevelColors()
+        private void AssignLevelColors()
         {
-            colorIndex = 0;
+            _colorIndex = 0;
             levelLineColorList = DataHandler.Instance.PickColors(wordList.Count);
         }
 
-
         public void SetLevelRunningBool(bool canTouch)
         {
-            isLevelRunning = canTouch;
+            _isLevelRunning = canTouch;
         }
 
         public void AssignLevel(Level levelScript)
@@ -149,12 +147,12 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public RectTransform GetRectTransform()
         {
-            return levelHandlerRect;
+            return _levelHandlerRect;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (!isLevelRunning)
+            if (!_isLevelRunning)
                 return;
 
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
@@ -178,7 +176,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (!isLevelRunning)
+            if (!_isLevelRunning)
                 return;
 
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
@@ -198,7 +196,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            if (!isLevelRunning)
+            if (!_isLevelRunning)
                 return;
             Debug.Log("Pointer Up");
 
@@ -213,7 +211,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             currLevel.GetLineRenderer().gameObject.SetActive(true);
             SetLinePoints(1, 0, startingGrid);
             SetLinePoints(2, 1, startingGrid);
-            OnNewLetterAddEvent?.Invoke(gridScript);
+            _onNewLetterAddEvent?.Invoke(gridScript);
         }
 
         Grid GetGridLineLastPoint()
@@ -235,7 +233,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             return null;
         }
 
-        public void SetLinePoints(int totalPoints, int index, Grid grid)
+        private void SetLinePoints(int totalPoints, int index, Grid grid)
         {
             currLevel.GetLineRenderer().positionCount = totalPoints;
 
@@ -276,8 +274,10 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         Grid GetGridByMousePos(Vector3 mousePos)
         {
-            PointerEventData pointerData = new PointerEventData(EventSystem.current);
-            pointerData.position = mousePos;
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = mousePos
+            };
 
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
@@ -335,7 +335,6 @@ namespace YugantLoyaLibrary.WordSearchGame
             currLevel.touchTextData = "";
             currGrid = null;
             startingGrid = null;
-            draggingDirection = GameController.InputDirection.NONE;
 
             if (!isMarkedCorrect)
             {
@@ -345,9 +344,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
             else
             {
-                if (isLevelRunning)
+                if (_isLevelRunning)
                 {
-                    colorIndex++;
+                    _colorIndex++;
                     GenerateNewLine();
                 }
             }
@@ -423,32 +422,27 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 if (secondY - firstY > 0)
                 {
-                    draggingDirection = GameController.InputDirection.BOTTOM_RIGHT;
-
                     for (int i = 0; i <= xDiff; i++)
                     {
                         Grid grid = GetGridByGridID(firstX + i, firstY + i);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                     }
                 }
                 else if (secondY - firstY == 0)
                 {
-                    draggingDirection = GameController.InputDirection.BOTTOM;
-
                     for (int i = firstX; i <= secondX; i++)
                     {
                         Grid grid = GetGridByGridID(i, firstY);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                     }
                 }
                 else if (secondY - firstY < 0)
                 {
-                    draggingDirection = GameController.InputDirection.BOTTOM_LEFT;
                     int counter = 0;
                     for (int i = 0; i <= xDiff; i++)
                     {
                         Grid grid = GetGridByGridID(firstX + counter, firstY - i);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                         counter++;
                     }
                 }
@@ -457,27 +451,22 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 if (secondY - firstY > 0)
                 {
-                    draggingDirection = GameController.InputDirection.RIGHT;
-
                     for (int i = firstY; i <= secondY; i++)
                     {
                         Grid grid = GetGridByGridID(firstX, i);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                     }
                 }
                 else if (secondY - firstY == 0)
                 {
-                    draggingDirection = GameController.InputDirection.NONE;
-                    OnNewLetterAddEvent?.Invoke(startingGrid);
+                    _onNewLetterAddEvent?.Invoke(startingGrid);
                 }
                 else if (secondY - firstY < 0)
                 {
-                    draggingDirection = GameController.InputDirection.LEFT;
-
                     for (int i = firstY; i >= secondY; i--)
                     {
                         Grid grid = GetGridByGridID(firstX, i);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                     }
                 }
             }
@@ -485,35 +474,29 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 if (secondY - firstY > 0)
                 {
-                    draggingDirection = GameController.InputDirection.TOP_RIGHT;
-
                     int counter = 0;
                     for (int i = 0; i <= yDiff; i++)
                     {
                         Grid grid = GetGridByGridID(firstX - i, firstY + counter);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                         counter++;
                     }
                 }
                 else if (secondY - firstY == 0)
                 {
-                    draggingDirection = GameController.InputDirection.TOP;
-
                     for (int i = firstX; i >= secondX; i--)
                     {
                         Grid grid = GetGridByGridID(i, firstY);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                     }
 
                 }
                 else if (secondY - firstY < 0)
                 {
-                    draggingDirection = GameController.InputDirection.TOP_LEFT;
-
                     for (int i = 0; i >= yDiff; i--)
                     {
                         Grid grid = GetGridByGridID(firstX + i, firstY + i);
-                        OnNewLetterAddEvent?.Invoke(grid);
+                        _onNewLetterAddEvent?.Invoke(grid);
                     }
                 }
             }
@@ -541,10 +524,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             bool isCorrect = false;
             //Debug.Log("Input Data : " + ans);
             List<LevelWords> levelWordList = wordList;
-            for (int i = 0; i < levelWordList.Count; i++)
+            foreach (var wordInfo in levelWordList)
             {
-                string originalString;
-                string revStr = GetReverseString(levelWordList[i].wordInfo.word, out originalString);
+                string revStr = GetReverseString(wordInfo.wordInfo.word, out var originalString);
 
                 //Debug.Log("Original Str : " + originalString);
                 //Debug.Log("Rev Str : " + revStr);
@@ -553,8 +535,8 @@ namespace YugantLoyaLibrary.WordSearchGame
                 if ((originalString == ans || revStr == ans) && quesGrid != null && !quesGrid.isMarked)
                 {
                     //Debug.Log("Correct !");
-                    levelWordList[i].isWordMarked = true;
-                    RemoveHint(levelWordList[i]);
+                    wordInfo.isWordMarked = true;
+                    RemoveHint(wordInfo);
                     currLevel.UpdateQuesList(originalString);
                     isCorrect = true;
                     break;
@@ -565,13 +547,13 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             if (isComplete)
             {
-                OnGameCompleteEvent?.Invoke();
+                onGameCompleteEvent?.Invoke();
             }
 
             InputDataReset(isCorrect);
         }
 
-        public string GetReverseString(string str, out string originalString)
+        private string GetReverseString(string str, out string originalString)
         {
             char[] revArr = str.ToCharArray();
             Array.Reverse(revArr);
@@ -599,21 +581,22 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void GenerateNewLine()
         {
-            LineRenderer line = Instantiate(lineRendererPrefab, currLevel.GetLineParentTrans());
+            LineRenderer line = Instantiate(DataHandler.Instance.lineRendererPrefab, currLevel.GetLineParentTrans());
             line.positionCount = 0;
             line.gameObject.SetActive(false);
             line.startWidth = currLevel.GetLineRendererWidth();
             line.endWidth = currLevel.GetLineRendererWidth();
             //Debug.Log("Color List Count : " + levelLineColorList.Count);
             //Debug.Log("Color Index " + colorIndex);
-            Color color = levelLineColorList[colorIndex];
+            Color color = levelLineColorList[_colorIndex];
             currLevel.SetLineRenderer(line, color);
         }
 
         private void LevelComplete()
         {
-            isLevelRunning = false;
-            GameController.Instance.NextLevel();
+            _isLevelRunning = false;
+
+            GameController.instance.NextLevel();
         }
 
         public void ShowHint()
@@ -654,7 +637,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void PlayHintAnimation(Grid grid, int index)
         {
-            GameObject hintObj = Instantiate(hintCirclePrefab, currLevel.GetHintContainer());
+            GameObject hintObj = Instantiate(DataHandler.Instance.hintCirclePrefab, currLevel.GetHintContainer());
             wordList[index].hintMarker = hintObj;
             hintObj.transform.position = grid.transform.position;
             Image hintImg = hintObj.GetComponent<Image>();
@@ -663,11 +646,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             hintImg.DOFillAmount(1f, timeToShowHint);
         }
 
-        void RemoveHint(LevelWords wordList)
+        void RemoveHint(LevelWords levelWords)
         {
-            if (wordList.isWordMarked)
+            if (levelWords.isWordMarked)
             {
-                Destroy(wordList.hintMarker);
+                Destroy(levelWords.hintMarker);
             }
         }
     }

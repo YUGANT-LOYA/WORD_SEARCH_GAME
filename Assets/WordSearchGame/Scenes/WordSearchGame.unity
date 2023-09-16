@@ -393,7 +393,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &927706960
 RectTransform:
   m_ObjectHideFlags: 0
@@ -557,7 +557,6 @@ MonoBehaviour:
   levelDataInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
   levelHandler: {fileID: 1522073353}
   levelContainer: {fileID: 1522073352}
-  levelPrefab: {fileID: 3546663009718316906, guid: 7d0fa61aa0a35894ea31bb22656eac7e, type: 3}
   fadeCanvasGroup: {fileID: 1408682840}
   timeToSwitchToNextLevel: 1
 --- !u!1 &1049438683
@@ -1014,7 +1013,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1432210749
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1183,8 +1182,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   currLevel: {fileID: 0}
-  lineRendererPrefab: {fileID: 6319055306387946753, guid: 507e894a8eb354b4dbe9977498d285fd, type: 3}
-  hintCirclePrefab: {fileID: 1460601674966876119, guid: dfcf241f372238e47b30aab1d8397e48, type: 3}
   currGrid: {fileID: 0}
   startingGrid: {fileID: 0}
   targetGrid: {fileID: 0}
@@ -1399,6 +1396,11 @@ MonoBehaviour:
   - {r: 1, g: 0.47798735, b: 0.93281585, a: 0.92156863}
   - {r: 0.38364774, g: 1, b: 0.6147374, a: 0.92156863}
   - {r: 1, g: 0.36477983, b: 0.6016083, a: 0.92156863}
+  coinPrefab: {fileID: 5845960473098219695, guid: 2910ee907e62b874e9872433e634127f, type: 3}
+  levelPrefab: {fileID: 3546663009718316906, guid: 7d0fa61aa0a35894ea31bb22656eac7e, type: 3}
+  lineRendererPrefab: {fileID: 6319055306387946753, guid: 507e894a8eb354b4dbe9977498d285fd, type: 3}
+  hintCirclePrefab: {fileID: 1460601674966876119, guid: dfcf241f372238e47b30aab1d8397e48, type: 3}
+  initial_Coins: 300
   colorIndex: 0
 --- !u!1 &5704458314791691809
 GameObject:

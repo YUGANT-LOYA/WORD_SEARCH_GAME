@@ -8,7 +8,7 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class LevelDataInfo : ScriptableObject
     {
         [System.Serializable]
-        public struct LevelInfo
+        public class LevelInfo
         {
             public Vector2Int gridSize;
             //[TextArea(10, 10)]
@@ -18,7 +18,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         }
 
         [System.Serializable]
-        public struct WordInfo
+        public class WordInfo
         {
             public string word;
             public Vector2Int firstLetterGridVal;

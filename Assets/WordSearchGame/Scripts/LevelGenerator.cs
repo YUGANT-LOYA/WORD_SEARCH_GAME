@@ -9,31 +9,37 @@ namespace YugantLoyaLibrary.WordSearchGame
 {
     public class LevelGenerator : MonoBehaviour
     {
+        [Tooltip("CSV File will be names According to Level number as Level_{levelNum}")]
         public int levelNum;
         public LevelDataInfo levelDataInfo;
+        [Tooltip("The Words which you need to find in the Grids and add to LevelDataInfo")]
         public List<string> wordList = new List<string>();
         public int numRows;
         public int numColumns;
         public int letterIndex = 0;
+        [Tooltip("Fill The Grid With Data")]
         public string[,] gridData;
         public bool validData = true;
+        [Tooltip("All Directions in which words will can be marked and will find the word inside the Grid")]
         public GameController.InputDirection[] directions;
         GameController.InputDirection matchingDir;
         public Vector2Int currCheckingGrid;
+        [Tooltip("Data that is filled by Level Generator and filled in Scriptable Object")]
         public LevelDataInfo.LevelInfo levelData;
         public LevelDataInfo.LevelInfo dataInfo;
 
-        private void OnEnable()
-        {
+        [Tooltip("If You need to Copy CSV File Data to Scriptable Object, assign csv File and Click Retrieve File Data To Scriptable Object")]
+        public TextAsset retrieveDatafile;
 
-        }
 
-        // Initialize the grid data
+
         private void Start()
         {
             gridData = new string[numRows, numColumns];
         }
-        public void ExportDataToCSV(LevelGenerator levelGenerator)
+
+#if UNITY_EDITOR
+        public string ExportDataToCSV(LevelGenerator levelGenerator)
         {
             string[,] data = levelGenerator.gridData;
             StringBuilder csvContent = new StringBuilder();
@@ -45,6 +51,14 @@ namespace YugantLoyaLibrary.WordSearchGame
                     csvContent.Append(data[i, j]);
                     csvContent.Append(",");
                 }
+                csvContent.AppendLine();
+            }
+
+            csvContent.AppendLine();
+            
+            for(int i = 0;i < levelGenerator.levelData.words.Count; i++)
+            {
+                csvContent.Append(levelGenerator.levelData.words[i].word);
                 csvContent.AppendLine();
             }
 
@@ -63,11 +77,12 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 Debug.Log("File Creating !!");
                 File.WriteAllText(filePath, csvContent.ToString());
+
             }
             else
             {
                 Debug.LogError($"File Already Exists with name Level_{levelGenerator.levelNum} !!");
-                return;
+                return null;
             }
 
             if (!Directory.Exists(filePath))
@@ -80,7 +95,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             AssetDatabase.Refresh();
 
             Debug.Log("CSV file saved to: " + filePath);
+
+            return relativeFilePath;
         }
+#endif
+
 
         public string GenerateRandom_ASCII_Code()
         {
@@ -120,7 +139,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                             Debug.Log($"DIR : {directions[k]}");
                             if (isAvail)
                             {
-                                Debug.Log("Temp Index : " + tempLetterIndex);
                                 tempLetterIndex = CheckNextLetter(newIndex, word, tempLetterIndex);
                                 Debug.Log("Temp Index : " + tempLetterIndex);
                                 if (tempLetterIndex != -1)
@@ -135,15 +153,12 @@ namespace YugantLoyaLibrary.WordSearchGame
                                     {
                                         Debug.Log("Word Found : " + wordFound);
                                         dir = matchingDir;
-
-                                        //UpdateLevelDataInfo(word);
-
                                         return wordMatchingGridID;
                                     }
                                     else
                                     {
                                         Debug.Log("MOVING TO NEXT DIR ! ");
-
+                                        tempLetterIndex = 0;
                                     }
                                 }
                                 else
@@ -161,7 +176,6 @@ namespace YugantLoyaLibrary.WordSearchGame
             wordMatchingGridID = Vector2Int.one * -1;
             return wordMatchingGridID;
         }
-
 
         bool CheckDirection(int i, int j, GameController.InputDirection dir, out Vector2Int newIndex)
         {
@@ -279,7 +293,6 @@ namespace YugantLoyaLibrary.WordSearchGame
             return -1;
         }
 
-
         bool MatchLetterInCurrDirection(string word, Vector2Int newIndex, out bool isMatching, int index, out int tempLetterIndex)
         {
             isMatching = false;
@@ -293,7 +306,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             if (tempLetterIndex < word.Length)
             {
                 //Debug.Log("Letter Index : " + tempLetterIndex); 
-                string letter = word[tempLetterIndex].ToString();
+                string letter = word[tempLetterIndex].ToString().ToUpper();
 
                 switch (matchingDir)
                 {
@@ -443,19 +456,54 @@ namespace YugantLoyaLibrary.WordSearchGame
             return isMatching;
         }
 
+#if UNITY_EDITOR
         public void FillScriptableObj()
         {
-            //Fills first 
-
             LevelDataInfo.LevelInfo info = new LevelDataInfo.LevelInfo();
 
-            info = levelData;
+            info.gridSize = levelData.gridSize;
+            info.words = levelData.words;
+            info.level_CSV = levelData.level_CSV;
 
             levelDataInfo.levelInfo.Add(info);
 
             EditorUtility.SetDirty(levelDataInfo);
 
         }
+#endif
+        public void FillDataFromCSV(LevelGenerator levelGenerator)
+        {
+            TextAsset levelTextFile = levelGenerator.retrieveDatafile;
+            string levelData = levelTextFile.text.Trim();
+            Debug.Log("Level Data String : " + levelData);
 
+            string[] lines = levelData.Split('\n');
+            Debug.Log("Lines : " + lines.Length);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string line = lines[i].Trim();
+                if (!string.IsNullOrEmpty(line) || !string.IsNullOrWhiteSpace(line))
+                {
+                    Debug.Log($"Line {i}  : {line}, Length Count : {line.Length}");
+
+                    // Split the string by comma
+                    string[] splitString = line.Split(',');
+
+                    // Join the substrings to create a character array without commas
+                    string charArrayString = string.Join("", splitString).ToUpper().Trim();
+
+                    for (int j = 0; j < charArrayString.Length; j++)
+                    {
+                        levelGenerator.gridData[i, j] = charArrayString[j].ToString();
+                        Debug.Log($"Grid Data {i} {j} : {charArrayString[j]}");
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
     }
 }

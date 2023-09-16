@@ -9,7 +9,6 @@ namespace YugantLoyaLibrary.WordSearchGame
 {
     public class UI_Manager : MonoBehaviour
     {
-        public Button prevButton,nextButton;
 
         private void Awake()
         {

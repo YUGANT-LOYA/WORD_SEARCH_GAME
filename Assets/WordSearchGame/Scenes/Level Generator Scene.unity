@@ -375,8 +375,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d602c4178bc289340b1a6d1adb923d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prevButton: {fileID: 1432210750}
-  nextButton: {fileID: 927706961}
 --- !u!1 &927706959
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,7 +393,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &927706960
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1016,7 +1014,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1432210749
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1269,23 +1267,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c5e1dae06ef5054699be73d3684dbfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelNum: 32
+  levelNum: 43
   levelDataInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
-  wordList: []
+  wordList:
+  - delhi
+  - lahore
+  - moscow
+  - onitsha
+  - prague
+  - telaviv
+  - tokyo
   numRows: 8
   numColumns: 8
   letterIndex: 0
-  validData: 0
+  validData: 1
   directions: 0100000002000000030000000400000005000000060000000700000008000000
   currCheckingGrid: {x: 0, y: 0}
   levelData:
-    gridSize: {x: 0, y: 0}
-    level_CSV: {fileID: 0}
-    words: []
+    gridSize: {x: 8, y: 8}
+    level_CSV: {fileID: 4900000, guid: 8387bac95a4f3cd4ca282200bdc6e89c, type: 3}
+    words:
+    - word: DELHI
+      firstLetterGridVal: {x: 1, y: 6}
+      dir: 2
+    - word: LAHORE
+      firstLetterGridVal: {x: 1, y: 0}
+      dir: 4
+    - word: MOSCOW
+      firstLetterGridVal: {x: 5, y: 5}
+      dir: 3
+    - word: ONITSHA
+      firstLetterGridVal: {x: 1, y: 3}
+      dir: 2
+    - word: PRAGUE
+      firstLetterGridVal: {x: 7, y: 1}
+      dir: 4
+    - word: TELAVIV
+      firstLetterGridVal: {x: 1, y: 7}
+      dir: 2
+    - word: TOKYO
+      firstLetterGridVal: {x: 6, y: 4}
+      dir: 1
   dataInfo:
     gridSize: {x: 8, y: 8}
-    level_CSV: {fileID: 0}
-    words: []
+    level_CSV: {fileID: 4900000, guid: 8387bac95a4f3cd4ca282200bdc6e89c, type: 3}
+    words:
+    - word: DELHI
+      firstLetterGridVal: {x: 1, y: 6}
+      dir: 2
+    - word: LAHORE
+      firstLetterGridVal: {x: 1, y: 0}
+      dir: 4
+    - word: MOSCOW
+      firstLetterGridVal: {x: 5, y: 5}
+      dir: 3
+    - word: ONITSHA
+      firstLetterGridVal: {x: 1, y: 3}
+      dir: 2
+    - word: PRAGUE
+      firstLetterGridVal: {x: 7, y: 1}
+      dir: 4
+    - word: TELAVIV
+      firstLetterGridVal: {x: 1, y: 7}
+      dir: 2
+    - word: TOKYO
+      firstLetterGridVal: {x: 6, y: 4}
+      dir: 1
+  retrieveDatafile: {fileID: 4900000, guid: 8387bac95a4f3cd4ca282200bdc6e89c, type: 3}
 --- !u!4 &1751739562
 Transform:
   m_ObjectHideFlags: 0

@@ -369,7 +369,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &485870012686841054
 RectTransform:
   m_ObjectHideFlags: 0
@@ -830,8 +830,6 @@ MonoBehaviour:
   hintButton: {fileID: 5530811999084289266}
   rotationContainer: {fileID: 986749209168651836}
   midPanelContainerTrans: {fileID: 6105233629280079956}
-  gridPrefab: {fileID: 801419134728346710, guid: 02dfa21492ed2c34e8be9330c6814c2b, type: 3}
-  quesPrefab: {fileID: 8076441460621347504, guid: 758beeb22023a2e42a283b07e3548d42, type: 3}
   gridContainer: {fileID: 959474667}
   lineParentTrans: {fileID: 6983158901345683030}
   quesParentTrans: {fileID: 647187612153094720}
@@ -987,7 +985,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5530811998898437148
 RectTransform:
   m_ObjectHideFlags: 0

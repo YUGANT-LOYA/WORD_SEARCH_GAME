@@ -1,23 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
     public class DataHandler : MonoBehaviour
     {
-        public static DataHandler Instance;
+        public static DataHandler instance;
 
         [Header("Prefab Holders")]
         public GameObject coinPrefab;
-        public GameObject levelPrefab;
+        public GameObject levelPrefab,hintCirclePrefab, gridPrefab, quesPrefab;
         public LineRenderer lineRendererPrefab;
-        public GameObject hintCirclePrefab;
 
         [Header("Data Info")]
         [SerializeField] List<Color> totalColors = new List<Color>();
-        [Tooltip("When player first time start playing, Initial coins player have")]
-        public int initial_Coins = 300;
+        [FormerlySerializedAs("initial_Coins")] [Tooltip("When player first time start playing, Initial coins player have")]
+        public int initialCoins = 300;
         public int colorIndex = 0;
 
 
@@ -28,21 +28,29 @@ namespace YugantLoyaLibrary.WordSearchGame
             Init();
         }
 
-        void Init()
-        {
-
-        }
-
         void CreateSingleton()
         {
-            if (Instance == null)
+            if (instance == null)
             {
-                Instance = this;
+                instance = this;
             }
-            else if (Instance != this)
+            else if (instance != this)
             {
                 Destroy(this.gameObject);
             }
+        }
+        
+        void Init()
+        {
+            int poolSize = GameController.instance.coinPoolSize;
+            
+            for (int i = 0; i < poolSize; i++)
+            {
+                GameObject coin = Instantiate(coinPrefab, GameController.instance.coinContainerTran);
+                coin.transform.localScale = Vector3.zero;
+                coin.gameObject.SetActive(false);
+            }
+            
         }
 
         public Color UpdateColor()
@@ -85,6 +93,28 @@ namespace YugantLoyaLibrary.WordSearchGame
             return colorList;
         }
 
+        public GameObject GetCoin()
+        {
+            Transform tran = GameController.instance.coinContainerTran;
+            
+            foreach (Transform coinTran in tran)
+            {
+                if (!coinTran.gameObject.activeInHierarchy)
+                {
+                    return coinTran.gameObject;
+                }
+            }
+
+            return null;
+        }
+
+        public void ResetCoin(GameObject coin)
+        {
+            coin.gameObject.SetActive(false);
+            coin.transform.SetParent(GameController.instance.coinContainerTran);
+            coin.transform.localScale = Vector3.one * (GameController.instance.uiManager.maxCoinScale / 2f);
+        }
+        
         public int CurrLevelNumber
         {
             get
@@ -101,7 +131,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             get
             {
-                return PlayerPrefs.GetInt(StringHelper.COIN_AVAIL, initial_Coins);
+                return PlayerPrefs.GetInt(StringHelper.COIN_AVAIL, initialCoins);
             }
             set
             {

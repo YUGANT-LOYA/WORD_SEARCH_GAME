@@ -32,7 +32,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         [SerializeField] Grid currGrid, startingGrid, targetGrid;
         [SerializeField] LayerMask gridLayerMask;
         RectTransform _levelHandlerRect;
-        public int showGridTillLevel = 4;
+        public int showGridTillLevel = 4,coinPerLevel = 100;
 
 
         
@@ -132,7 +132,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         private void AssignLevelColors()
         {
             _colorIndex = 0;
-            levelLineColorList = DataHandler.Instance.PickColors(wordList.Count);
+            levelLineColorList = DataHandler.instance.PickColors(wordList.Count);
         }
 
         public void SetLevelRunningBool(bool canTouch)
@@ -323,7 +323,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             if (gridObj != null)
             {
                 gridObj.isCorrect = true;
-                currLevel.touchTextData += gridObj.gridTextData;
+                currLevel.TouchTextData += gridObj.gridTextData;
                 inputGridsList.Add(gridObj);
             }
         }
@@ -332,7 +332,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             inputGridsList.Clear();
             mainDir = GameController.Direction.NONE;
-            currLevel.touchTextData = "";
+            currLevel.TouchTextData = "";
             currGrid = null;
             startingGrid = null;
 
@@ -405,7 +405,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         void UpdateInputList()
         {
             inputGridsList.Clear();
-            currLevel.touchTextData = "";
+            currLevel.TouchTextData = "";
 
             // gridId x is behaving as row(i) .
             //gridId y is behaving as column(j).
@@ -520,7 +520,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         void CheckAnswer()
         {
-            string ans = currLevel.touchTextData;
+            string ans = currLevel.TouchTextData;
             bool isCorrect = false;
             //Debug.Log("Input Data : " + ans);
             List<LevelWords> levelWordList = wordList;
@@ -581,7 +581,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void GenerateNewLine()
         {
-            LineRenderer line = Instantiate(DataHandler.Instance.lineRendererPrefab, currLevel.GetLineParentTrans());
+            LineRenderer line = Instantiate(DataHandler.instance.lineRendererPrefab, currLevel.GetLineParentTrans());
             line.positionCount = 0;
             line.gameObject.SetActive(false);
             line.startWidth = currLevel.GetLineRendererWidth();
@@ -595,8 +595,9 @@ namespace YugantLoyaLibrary.WordSearchGame
         private void LevelComplete()
         {
             _isLevelRunning = false;
-
-            GameController.instance.NextLevel();
+            GameController.instance.uiManager.CoinCollectionAnimation(coinPerLevel);
+            
+            //GameController.instance.NextLevel();
         }
 
         public void ShowHint()
@@ -637,7 +638,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void PlayHintAnimation(Grid grid, int index)
         {
-            GameObject hintObj = Instantiate(DataHandler.Instance.hintCirclePrefab, currLevel.GetHintContainer());
+            GameObject hintObj = Instantiate(DataHandler.instance.hintCirclePrefab, currLevel.GetHintContainer());
             wordList[index].hintMarker = hintObj;
             hintObj.transform.position = grid.transform.position;
             Image hintImg = hintObj.GetComponent<Image>();

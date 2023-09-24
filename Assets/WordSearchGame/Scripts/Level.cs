@@ -1,10 +1,6 @@
-using JetBrains.Annotations;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static YugantLoyaLibrary.WordSearchGame.LevelHandler;
 
@@ -14,41 +10,28 @@ namespace YugantLoyaLibrary.WordSearchGame
     {
         [Header("Main Info")]
         //public Vector2 lineOffset;
-        LevelHandler levelHandler;
+        private LevelHandler _levelHandler;
         public Vector2Int gridSize;
         [SerializeField] Button restartButton, hintButton;
         public Transform rotationContainer, midPanelContainerTrans;
-        [SerializeField] GameObject gridPrefab, quesPrefab;
         [SerializeField] Transform gridContainer, lineParentTrans, quesParentTrans, hintContainer;
         [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
         [SerializeField] LineRenderer lineRenderer;
-        float currGridWidth, currGridHeight, lineRendererWidth = 0.4f;
-        List<QuesGrid> quesList;
+        private float _currGridWidth, _currGridHeight, _lineRendererWidth = 0.4f;
+        private List<QuesGrid> _quesList;
         [Header("Input Data Info")]
         [SerializeField] TextMeshProUGUI touchText, levelNumText;
 
-        public string touchTextData
+        public string TouchTextData
         {
-            get
-            {
-                return touchText.text;
-            }
-            set
-            {
-                touchText.text = value;
-            }
+            get => touchText.text;
+            set => touchText.text = value;
         }
 
-        public string levelNumData
+        public string LevelNumData
         {
-            get
-            {
-                return levelNumText.text;
-            }
-            set
-            {
-                levelNumText.text = value;
-            }
+            get => levelNumText.text;
+            set => levelNumText.text = value;
         }
 
         public void StartInit()
@@ -58,39 +41,27 @@ namespace YugantLoyaLibrary.WordSearchGame
             SetGridSize();
             CreateGrid();
             SetLineRendererWidth();
-            levelHandler.GenerateNewLine();
-            InitQuesList(levelHandler.wordList);
-            levelNumData = $"Level {DataHandler.Instance.CurrLevelNumber + 1}";
+            _levelHandler.GenerateNewLine();
+            InitQuesList(_levelHandler.wordList);
+            LevelNumData = $"Level {DataHandler.instance.CurrLevelNumber + 1}";
         }
 
         public void FillData(LevelHandler handler)
         {
             AssignLevelHandler(handler);
             restartButton.onClick.AddListener(() => { GameController.instance.RestartLevel(); });
-            hintButton.onClick.AddListener(() => { levelHandler.ShowHint(); });
+            hintButton.onClick.AddListener(() => { _levelHandler.ShowHint(); });
         }
 
         public float GetLineRendererWidth()
         {
-            return lineRendererWidth;
+            return _lineRendererWidth;
         }
 
         private void SetLineRendererWidth()
         {
-            float size;
-            if (currGridWidth > currGridHeight)
-            {
-                size = currGridHeight;
-            }
-            else
-            {
-                size = currGridWidth;
-            }
-
-            lineRendererWidth = size / 250f;
-
-            //lineOffset = midPanelContainerTrans.GetComponent<RectTransform>().anchoredPosition;
-            //Debug.Log("Line Offset : " + lineOffset);
+            var size = _currGridWidth > _currGridHeight ? _currGridHeight : _currGridWidth;
+            _lineRendererWidth = size / 250f;
         }
 
         public Transform GetLineParentTrans()
@@ -117,20 +88,18 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void SetLineRendererPoint(int index, Vector2 mousePos)
         {
-            Vector2 canvasMousePos;
-
             RectTransform gridRect = gridContainer.GetComponent<RectTransform>();
 
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(gridRect, mousePos, levelHandler.cam, out canvasMousePos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(gridRect, mousePos, _levelHandler.cam, out var canvasMousePos);
 
             // Set the position in the LineRenderer
             lineRenderer.SetPosition(index, canvasMousePos);
 
         }
 
-        public void AssignLevelHandler(LevelHandler handler)
+        private void AssignLevelHandler(LevelHandler handler)
         {
-            levelHandler = handler;
+            _levelHandler = handler;
         }
 
         public Transform GetGridContainerTrans()
@@ -140,18 +109,8 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         void SetGridLayout()
         {
-
-            int gridLength;
-
             //To confirm that grid is square and should have all element filled.
-            if (gridSize.x >= gridSize.y)
-            {
-                gridLength = gridSize.x;
-            }
-            else
-            {
-                gridLength = gridSize.y;
-            }
+            int gridLength = gridSize.x >= gridSize.y ? gridSize.x : gridSize.y;
 
             //gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             gridContainerLayoutGroup.constraintCount = gridLength;
@@ -166,19 +125,20 @@ namespace YugantLoyaLibrary.WordSearchGame
             float spacingX = (gridSize.y - 1) * gridContainerLayoutGroup.spacing.y;
             float spacingY = (gridSize.x - 1) * gridContainerLayoutGroup.spacing.x;
 
-            float gridWidth = (float)(width - spacingX) / (float)(gridSize.y);
-            float gridHeight = (float)(height - spacingY) / (float)(gridSize.x);
+            float gridWidth = (width - spacingX) / (gridSize.y);
+            float gridHeight = (height - spacingY) / (gridSize.x);
 
-            currGridWidth = gridWidth;
-            currGridHeight = gridHeight;
+            _currGridWidth = gridWidth;
+            _currGridHeight = gridHeight;
 
             //Debug.Log($"Cell Width : {currGridWidth} , Cell Height : {currGridHeight}");
 
-            gridContainerLayoutGroup.cellSize = new Vector2(currGridWidth, currGridHeight);
+            gridContainerLayoutGroup.cellSize = new Vector2(_currGridWidth, _currGridHeight);
         }
 
         void CreateGrid()
         {
+            GameObject gridPrefab = DataHandler.instance.gridPrefab; 
             for (int i = 0; i < gridSize.x; i++)
             {
                 for (int j = 0; j < gridSize.y; j++)
@@ -187,12 +147,12 @@ namespace YugantLoyaLibrary.WordSearchGame
                     gmObj.name = $"Grid_{i}_{j}";
                     Grid gridScript = gmObj.GetComponent<Grid>();
                     gridScript.gridID = new Vector2Int(i, j);
-                    levelHandler.totalGridsList.Add(gridScript);
+                    _levelHandler.totalGridsList.Add(gridScript);
                     AssignGridData(gridScript, i, j);
 
                    
                     
-                    if (DataHandler.Instance.CurrLevelNumber < levelHandler.showGridTillLevel)
+                    if (DataHandler.instance.CurrLevelNumber < _levelHandler.showGridTillLevel)
                     {
                         Image gridContainerImg = gridContainer.GetComponent<Image>();
                         Color color = gridContainerImg.color;
@@ -211,48 +171,50 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void AssignGridData(Grid gridScript, int row, int column)
         {
-            gridScript.gridTextData = levelHandler.gridData[row][column].ToString().ToUpper();
+            gridScript.gridTextData = _levelHandler.gridData[row][column].ToString().ToUpper();
         }
 
-        public void ResetQuesData()
+        private void ResetQuesData()
         {
             for (int i = quesParentTrans.childCount - 1; i >= 0; i--)
             {
                 Destroy(quesParentTrans.GetChild(i).gameObject);
             }
 
-            quesList = new List<QuesGrid>();
+            _quesList = new List<QuesGrid>();
         }
 
-        public void InitQuesList(List<LevelWords> wordsList)
+        private void InitQuesList(List<LevelWords> wordsList)
         {
             ResetQuesData();
 
-            for (int i = 0; i < wordsList.Count; i++)
+            GameObject quesPrefab = DataHandler.instance.quesPrefab;
+            
+            foreach (var word in wordsList)
             {
                 GameObject ques = Instantiate(quesPrefab, quesParentTrans);
                 QuesGrid quesGridScript = ques.GetComponent<QuesGrid>();
-                quesList.Add(quesGridScript);
-                quesGridScript.quesTextData = wordsList[i].wordInfo.word;
+                _quesList.Add(quesGridScript);
+                quesGridScript.quesTextData = word.wordInfo.word;
             }
         }
 
         public void UpdateQuesList(string ans)
         {
-            for (int i = 0; i < quesList.Count; i++)
+            foreach (var ques in _quesList)
             {
-                if (quesList[i].quesTextData == ans && !quesList[i].isMarked)
+                if (ques.quesTextData == ans && !ques.isMarked)
                 {
                     Debug.Log("Ques Matched !");
-                    quesList[i].isMarked = true;
-                    quesList[i].StrikeQues();
+                    ques.isMarked = true;
+                    ques.StrikeQues();
                 }
             }
         }
 
         public QuesGrid GetQuesGrid(string ans, string revStr)
         {
-            foreach (QuesGrid quesGrid in quesList)
+            foreach (QuesGrid quesGrid in _quesList)
             {
                 if (quesGrid.quesTextData == ans || quesGrid.quesTextData == revStr)
                 {
@@ -265,20 +227,15 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public bool IsAllQuesMarked()
         {
-            bool isComplete = true;
-
-            for (int i = 0; i < quesList.Count; i++)
+            foreach (QuesGrid quesGrid in _quesList)
             {
-                QuesGrid quesGrid = quesList[i];
-
                 if (!quesGrid.isMarked)
                 {
-                    isComplete = false;
-                    return isComplete;
+                    return false;
                 }
             }
 
-            return isComplete;
+            return true;
         }
 
     }

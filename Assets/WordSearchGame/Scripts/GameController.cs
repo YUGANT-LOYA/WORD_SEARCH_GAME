@@ -8,11 +8,13 @@ namespace YugantLoyaLibrary.WordSearchGame
         public static GameController instance;
         
         [Header("References")]
-        [SerializeField] UI_Manager uiManager;
+        public UIManager uiManager;
         [SerializeField] LevelDataInfo levelDataInfo;
         [SerializeField] LevelHandler levelHandler;
         [SerializeField] Transform levelContainer;
         [SerializeField] CanvasGroup fadeCanvasGroup;
+        public Transform coinContainerTran;
+        public int coinPoolSize = 20;
         Level _currLevel;
         bool _isRestarting;
 
@@ -43,6 +45,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void Awake()
         {
+            Application.targetFrameRate = 60;
             CreateSingleton();
         }
 
@@ -67,7 +70,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         void CreateLevel()
         {
-            GameObject level = Instantiate(DataHandler.Instance.levelPrefab, levelContainer);
+            GameObject level = Instantiate(DataHandler.instance.levelPrefab, levelContainer);
             _currLevel = level.GetComponent<Level>();
             AssignLevelData();
         }
@@ -84,18 +87,19 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public TextAsset GetGridDataOfLevel()
         {
-            return levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber].level_CSV;
+            return levelDataInfo.levelInfo[DataHandler.instance.CurrLevelNumber].levelCsv;
         }
 
         public LevelDataInfo.LevelInfo GetLevelDataInfo()
         {
-            Debug.Log("Curr Level Num : " + DataHandler.Instance.CurrLevelNumber);
-            return levelDataInfo.levelInfo[DataHandler.Instance.CurrLevelNumber];
+            Debug.Log("Curr Level Num : " + DataHandler.instance.CurrLevelNumber);
+            return levelDataInfo.levelInfo[DataHandler.instance.CurrLevelNumber];
         }
 
         void GameStartInfo()
         {
-            DataHandler.Instance.CurrLevelNumber = 0;
+            DataHandler.instance.CurrLevelNumber = 0;
+            uiManager.coinText.text = DataHandler.instance.initialCoins.ToString();
         }
 
         void ClearLevelContainer()
@@ -109,7 +113,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
-        public UI_Manager GetUIManager()
+        public UIManager GetUIManager()
         {
             return uiManager;
         }
@@ -205,27 +209,28 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void NextLevel()
         {
-            if (DataHandler.Instance.CurrLevelNumber < levelDataInfo.levelInfo.Count - 1)
+            if (DataHandler.instance.CurrLevelNumber < levelDataInfo.levelInfo.Count - 1)
             {
-                DataHandler.Instance.CurrLevelNumber++;
+                DataHandler.instance.CurrLevelNumber++;
             }
             else
             {
-                DataHandler.Instance.CurrLevelNumber = 0;
+                DataHandler.instance.CurrLevelNumber = 0;
             }
 
             StartCoroutine(nameof(FadeScreen));
+            uiManager.winPanel.SetActive(false);
         }
 
         public void PreviousLevel()
         {
-            if (DataHandler.Instance.CurrLevelNumber > 0)
+            if (DataHandler.instance.CurrLevelNumber > 0)
             {
-                DataHandler.Instance.CurrLevelNumber--;
+                DataHandler.instance.CurrLevelNumber--;
             }
             else
             {
-                DataHandler.Instance.CurrLevelNumber = levelDataInfo.levelInfo.Count - 1;
+                DataHandler.instance.CurrLevelNumber = levelDataInfo.levelInfo.Count - 1;
             }
 
             StartCoroutine(nameof(FadeScreen));

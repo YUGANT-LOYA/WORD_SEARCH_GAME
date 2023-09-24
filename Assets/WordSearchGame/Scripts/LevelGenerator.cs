@@ -29,9 +29,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         [Tooltip("If You need to Copy CSV File Data to Scriptable Object, assign csv File and Click Retrieve File Data To Scriptable Object")]
         public TextAsset retrieveDatafile;
-
-
-
+        
         private void Start()
         {
             gridData = new string[numRows, numColumns];
@@ -98,7 +96,6 @@ namespace YugantLoyaLibrary.WordSearchGame
             return relativeFilePath;
         }
 #endif
-
 
         public string GenerateRandom_ASCII_Code()
         {
@@ -452,11 +449,12 @@ namespace YugantLoyaLibrary.WordSearchGame
 #if UNITY_EDITOR
         public void FillScriptableObj()
         {
-            LevelDataInfo.LevelInfo info = new LevelDataInfo.LevelInfo();
-
-            info.gridSize = levelData.gridSize;
-            info.words = levelData.words;
-            info.level_CSV = levelData.level_CSV;
+            LevelDataInfo.LevelInfo info = new LevelDataInfo.LevelInfo
+            {
+                gridSize = levelData.gridSize,
+                words = levelData.words,
+                levelCsv = levelData.levelCsv
+            };
 
             levelDataInfo.levelInfo.Add(info);
 

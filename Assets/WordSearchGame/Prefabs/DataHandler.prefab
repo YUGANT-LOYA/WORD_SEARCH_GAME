@@ -44,6 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d63c616eee17ed408db6b9673a71672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 5845960473098219695, guid: 2910ee907e62b874e9872433e634127f, type: 3}
+  levelPrefab: {fileID: 3546663009718316906, guid: 7d0fa61aa0a35894ea31bb22656eac7e, type: 3}
+  hintCirclePrefab: {fileID: 1460601674966876119, guid: dfcf241f372238e47b30aab1d8397e48, type: 3}
+  gridPrefab: {fileID: 801419134728346710, guid: 02dfa21492ed2c34e8be9330c6814c2b, type: 3}
+  quesPrefab: {fileID: 8076441460621347504, guid: 758beeb22023a2e42a283b07e3548d42, type: 3}
+  lineRendererPrefab: {fileID: 6319055306387946753, guid: 507e894a8eb354b4dbe9977498d285fd, type: 3}
   totalColors:
   - {r: 0.38364774, g: 1, b: 0.4247762, a: 0.92156863}
   - {r: 1, g: 0.37070796, b: 0.30817604, a: 0.92156863}
@@ -58,4 +64,5 @@ MonoBehaviour:
   - {r: 1, g: 0.47798735, b: 0.93281585, a: 0.92156863}
   - {r: 0.38364774, g: 1, b: 0.6147374, a: 0.92156863}
   - {r: 1, g: 0.36477983, b: 0.6016083, a: 0.92156863}
+  initial_Coins: 300
   colorIndex: 0

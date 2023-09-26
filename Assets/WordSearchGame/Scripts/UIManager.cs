@@ -11,12 +11,13 @@ namespace YugantLoyaLibrary.WordSearchGame
 {
     public class UIManager : MonoBehaviour
     {
-        public float coinAnimTime = 1.5f, coinTextUpdateTime, coinRotateAngle = 810f, maxCoinScale = 45f;
+        public float coinAnimTime = 1.5f, coinRotateAngle = 810f, maxCoinScale = 45f;
         public TextMeshProUGUI coinText;
         public GameObject winPanel;
         public GameObject menuGameObj, coinHolderGm;
         public Ease coinMovementEase;
-
+        private float _coinTextUpdateTime;
+        
         public void CoinCollectionAnimation(int coinToAdd)
         {
             StartCoroutine(nameof(PlayCoinAnim), coinToAdd);
@@ -25,7 +26,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         private IEnumerator PlayCoinAnim(int coinToBeAdded)
         {
             CallWinPanel();
-            coinTextUpdateTime = coinAnimTime / 2;
+            _coinTextUpdateTime = coinAnimTime / 2;
             float xVal = Random.Range(-0.5f, 0.5f);
             float yVal = Random.Range(-0.5f, 0.5f);
             bool isCoinTextUpdating = false;
@@ -46,16 +47,16 @@ namespace YugantLoyaLibrary.WordSearchGame
                 yield return new WaitForSeconds(coinMovementTime);
                 
                 coin.transform.DORotate(new Vector3(coinRotateAngle, coinRotateAngle,
-                    coinRotateAngle), coinTextUpdateTime, RotateMode.FastBeyond360).SetEase(coinMovementEase);
+                    coinRotateAngle), _coinTextUpdateTime, RotateMode.FastBeyond360).SetEase(coinMovementEase);
                 
-                coin.transform.DOMove(new Vector2(position.x - 0.65f, position.y), coinTextUpdateTime)
+                coin.transform.DOMove(new Vector2(position.x - 0.65f, position.y), _coinTextUpdateTime)
                     .SetEase(coinMovementEase).OnComplete(
                         () =>
                         {
                             DataHandler.instance.ResetCoin(coin);
                             if (isCoinTextUpdating) return;
                             isCoinTextUpdating = true;
-                            StartCoroutine(UpdateCoinText(coinToBeAdded, (coinTextUpdateTime/2)));
+                            StartCoroutine(UpdateCoinText(coinToBeAdded, (_coinTextUpdateTime/2)));
                         });
                 
                 xVal = Random.Range(-0.5f, 0.5f);

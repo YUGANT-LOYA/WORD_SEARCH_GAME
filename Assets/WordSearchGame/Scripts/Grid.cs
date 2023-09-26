@@ -1,4 +1,7 @@
+using System;
+using DG.Tweening;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,5 +31,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             gridBg.color = isActive ? new Color(gridColor.r,gridColor.g,gridColor.b,255f) : new Color(gridColor.r, gridColor.g, gridColor.b, 0f);
         }
 
+        private void OnDestroy()
+        {
+            DOTween.Kill(this, false);
+        }
     }
 }

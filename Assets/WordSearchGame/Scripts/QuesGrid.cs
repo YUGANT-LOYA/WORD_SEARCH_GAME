@@ -10,7 +10,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         [SerializeField] TextMeshProUGUI quesText;
         public bool isMarked;
 
-        public string quesTextData
+        public string QuesTextData
         {
             get
             {
@@ -24,8 +24,9 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public void StrikeQues()
         {
-            string str = $"<b><s>{quesTextData}</s></b>";
-            quesTextData = str;
+            string str = $"<b><s>{QuesTextData}</s></b>";
+            quesText.color = Color.gray;
+            QuesTextData = str;
         }
     }
 }

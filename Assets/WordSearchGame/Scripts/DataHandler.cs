@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,12 +7,12 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class DataHandler : MonoBehaviour
     {
         public static DataHandler instance;
-
+        
+        LevelHandler _levelHandler;
         [Header("Prefab Holders")]
         public GameObject coinPrefab;
         public GameObject levelPrefab,hintCirclePrefab, gridPrefab, quesPrefab;
         public LineRenderer lineRendererPrefab;
-
         [Header("Data Info")]
         [SerializeField] List<Color> totalColors = new List<Color>();
         [FormerlySerializedAs("initial_Coins")] [Tooltip("When player first time start playing, Initial coins player have")]
@@ -24,7 +23,6 @@ namespace YugantLoyaLibrary.WordSearchGame
         private void Awake()
         {
             CreateSingleton();
-
             Init();
         }
 
@@ -51,6 +49,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 coin.gameObject.SetActive(false);
             }
             
+            _levelHandler = GameController.instance.GetLevelHandler();
         }
 
         public Color UpdateColor()

@@ -1,8 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static YugantLoyaLibrary.WordSearchGame.LevelHandler;
+using DG.Tweening;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
@@ -11,16 +12,27 @@ namespace YugantLoyaLibrary.WordSearchGame
         [Header("Main Info")]
         //public Vector2 lineOffset;
         private LevelHandler _levelHandler;
+
         public Vector2Int gridSize;
+        private readonly int[] _randomScreenPointArr = { -1, 1 };
+        public Ease gridPlacementEase;
+
+        [Tooltip("The Distance outside the screen from where the grid should come and place in the grid")]
+        public float distanceFromScreen = 250f;
+
+        [Tooltip("Time to place Grid in its original Position")]
+        public float timeToPlaceGrid = 0.4f;
+
         [SerializeField] Button restartButton, hintButton;
         public Transform rotationContainer, midPanelContainerTrans;
         [SerializeField] Transform gridContainer, lineParentTrans, quesParentTrans, hintContainer;
-        [SerializeField] GridLayoutGroup gridContainerLayoutGroup;
         [SerializeField] LineRenderer lineRenderer;
         private float _currGridWidth, _currGridHeight, _lineRendererWidth = 0.4f;
+        [SerializeField] private float gridSpacing = 10f;
         private List<QuesGrid> _quesList;
-        [Header("Input Data Info")]
-        [SerializeField] TextMeshProUGUI touchText, levelNumText;
+
+        [Header("Input Data Info")] [SerializeField]
+        TextMeshProUGUI touchText, levelNumText;
 
         public string TouchTextData
         {
@@ -37,7 +49,6 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void StartInit()
         {
             //Debug.Log("Level StartInit Called !");
-            SetGridLayout();
             SetGridSize();
             CreateGrid();
             SetLineRendererWidth();
@@ -90,11 +101,11 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             RectTransform gridRect = gridContainer.GetComponent<RectTransform>();
 
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(gridRect, mousePos, _levelHandler.cam, out var canvasMousePos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(gridRect, mousePos, _levelHandler.cam,
+                out var canvasMousePos);
 
             // Set the position in the LineRenderer
             lineRenderer.SetPosition(index, canvasMousePos);
-
         }
 
         private void AssignLevelHandler(LevelHandler handler)
@@ -107,73 +118,121 @@ namespace YugantLoyaLibrary.WordSearchGame
             return gridContainer;
         }
 
-        void SetGridLayout()
-        {
-            //To confirm that grid is square and should have all element filled.
-            int gridLength = gridSize.x >= gridSize.y ? gridSize.x : gridSize.y;
-
-            //gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            gridContainerLayoutGroup.constraintCount = gridLength;
-        }
-
         void SetGridSize()
         {
             float width = gridContainer.GetComponent<RectTransform>().sizeDelta.x;
             float height = gridContainer.GetComponent<RectTransform>().sizeDelta.y;
-
             //Debug.Log($"Width : {width} , Height : {height}");
-            float spacingX = (gridSize.y - 1) * gridContainerLayoutGroup.spacing.y;
-            float spacingY = (gridSize.x - 1) * gridContainerLayoutGroup.spacing.x;
+            float spacingX = (gridSize.y - 1) * gridSpacing;
+            float spacingY = (gridSize.x - 1) * gridSpacing;
 
             float gridWidth = (width - spacingX) / (gridSize.y);
             float gridHeight = (height - spacingY) / (gridSize.x);
 
             _currGridWidth = gridWidth;
             _currGridHeight = gridHeight;
-
-            //Debug.Log($"Cell Width : {currGridWidth} , Cell Height : {currGridHeight}");
-
-            gridContainerLayoutGroup.cellSize = new Vector2(_currGridWidth, _currGridHeight);
         }
 
-        void CreateGrid()
+        Vector2 GetRandomPointOutOfScreen()
         {
-            GameObject gridPrefab = DataHandler.instance.gridPrefab; 
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            float randomX = 0f, randomY = 0f;
+            int side = Random.Range(0, _randomScreenPointArr.Length);
+
+            //Side  = -1 means Horizontal and Side = 1 means Vertical
+            if (_randomScreenPointArr[side] == -1)
+            {
+                int xPoint = Random.Range(0, _randomScreenPointArr.Length);
+
+                if (_randomScreenPointArr[xPoint] == -1)
+                {
+                    //When the side is selected as Left Side.
+                    randomX = Random.Range(-screenWidth / 2 - distanceFromScreen,
+                        -screenWidth / 2 - (distanceFromScreen * 2));
+                    randomY = Random.Range(-screenHeight / 2, screenHeight);
+                }
+                else if (_randomScreenPointArr[xPoint] == 1)
+                {
+                    //When the side is selected as Right Side.
+                    randomX = Random.Range(screenWidth / 2 + distanceFromScreen,
+                        screenWidth / 2 + (distanceFromScreen * 2));
+                    randomY = Random.Range(-screenHeight / 2, screenHeight);
+                }
+            }
+            else
+            {
+                int yPoint = Random.Range(0, _randomScreenPointArr.Length);
+
+                if (_randomScreenPointArr[yPoint] == -1)
+                {
+                    //When the side is selected as Bottom Side.
+                    randomX = Random.Range(-screenWidth / 2, -screenWidth / 2 - distanceFromScreen);
+                    randomY = Random.Range(-screenHeight / 2 - distanceFromScreen,
+                        -screenHeight / 2 - (distanceFromScreen * 2));
+                }
+                else if (_randomScreenPointArr[yPoint] == 1)
+                {
+                    //When the side is selected as Top Side.
+                    randomX = Random.Range(screenWidth, screenWidth + distanceFromScreen);
+                    randomY = Random.Range(screenHeight / 2 + distanceFromScreen,
+                        screenHeight / 2 + (distanceFromScreen * 2));
+                }
+            }
+
+            return new Vector2(randomX, randomY);
+        }
+
+        private void CreateGrid()
+        {
+            GameObject gridPrefab = DataHandler.instance.gridPrefab;
+            RectTransform gridRect = gridContainer.GetComponent<RectTransform>();
+            var gridContainerSize = gridRect.sizeDelta;
+            float defaultXPos = (-gridContainerSize.x / 2) + _currGridWidth / 2;
+            float defaultYPos = (gridContainerSize.y / 2) - _currGridHeight / 2;
+            Vector2 startPos = new Vector2(defaultXPos, defaultYPos);
+            //Debug.Log("Start Pos : " + startPos);
             for (int i = 0; i < gridSize.x; i++)
             {
                 for (int j = 0; j < gridSize.y; j++)
                 {
                     GameObject gmObj = Instantiate(gridPrefab, gridContainer);
+                    RectTransform gmRect = gmObj.GetComponent<RectTransform>();
+                    gmRect.sizeDelta = new Vector2(_currGridWidth, _currGridHeight);
+                    gmRect.anchoredPosition = GetRandomPointOutOfScreen();
                     gmObj.name = $"Grid_{i}_{j}";
                     Grid gridScript = gmObj.GetComponent<Grid>();
                     gridScript.GridID = new Vector2Int(i, j);
                     _levelHandler.totalGridsList.Add(gridScript);
                     AssignGridData(gridScript, i, j);
-
-                   
+                    gmRect.transform.DOLocalMove(startPos, timeToPlaceGrid).SetEase(gridPlacementEase);
                     
                     if (DataHandler.instance.CurrLevelNumber < _levelHandler.showGridTillLevel)
                     {
                         Image gridContainerImg = gridContainer.GetComponent<Image>();
                         Color color = gridContainerImg.color;
-                        gridContainerImg.color = new Color(color.r, color.g, color.b,0f);
-                        gridContainerLayoutGroup.spacing = new Vector2(10f, 10f);
+                        gridContainerImg.color = new Color(color.r, color.g, color.b, 0f);
+                        //gridContainerLayoutGroup.spacing = new Vector2(10f, 10f);
                         gridScript.SetGridBg(true);
                     }
                     else
                     {
                         gridScript.SetGridBg(false);
                     }
-                }
-            }
 
+                    startPos += new Vector2(gridSpacing + _currGridWidth, 0);
+                }
+
+                startPos.x = defaultXPos;
+                startPos.y = defaultYPos - ((i + 1) * _currGridHeight) - (gridSpacing * (i + 1));
+            }
         }
 
         private void AssignGridData(Grid gridScript, int row, int column)
         {
             string str = _levelHandler.gridData[row][column].ToString().ToUpper();
             gridScript.GridTextData = str;
-            
+
             if (string.IsNullOrWhiteSpace(str))
             {
                 gridScript.isSelectable = false;
@@ -190,18 +249,18 @@ namespace YugantLoyaLibrary.WordSearchGame
             _quesList = new List<QuesGrid>();
         }
 
-        private void InitQuesList(List<LevelWords> wordsList)
+        private void InitQuesList(List<LevelHandler.LevelWords> wordsList)
         {
             ResetQuesData();
 
             GameObject quesPrefab = DataHandler.instance.quesPrefab;
-            
+
             foreach (var word in wordsList)
             {
                 GameObject ques = Instantiate(quesPrefab, quesParentTrans);
                 QuesGrid quesGridScript = ques.GetComponent<QuesGrid>();
                 _quesList.Add(quesGridScript);
-                quesGridScript.quesTextData = word.wordInfo.word;
+                quesGridScript.QuesTextData = word.wordInfo.word;
             }
         }
 
@@ -209,7 +268,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             foreach (var ques in _quesList)
             {
-                if (ques.quesTextData == ans && !ques.isMarked)
+                if (ques.QuesTextData == ans && !ques.isMarked)
                 {
                     Debug.Log("Ques Matched !");
                     ques.isMarked = true;
@@ -222,7 +281,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             foreach (QuesGrid quesGrid in _quesList)
             {
-                if (quesGrid.quesTextData == ans || quesGrid.quesTextData == revStr)
+                if (quesGrid.QuesTextData == ans || quesGrid.QuesTextData == revStr)
                 {
                     return quesGrid;
                 }
@@ -243,7 +302,5 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             return true;
         }
-
     }
-
 }

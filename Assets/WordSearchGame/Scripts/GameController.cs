@@ -6,9 +6,8 @@ namespace YugantLoyaLibrary.WordSearchGame
     public class GameController : MonoBehaviour
     {
         public static GameController instance;
-        
-        [Header("References")]
-        public UIManager uiManager;
+
+        [Header("References")] public UIManager uiManager;
         [SerializeField] private LevelDataInfo levelDataInfo;
         [SerializeField] private LevelHandler levelHandler;
         [SerializeField] private Transform levelContainer;
@@ -45,7 +44,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void Awake()
         {
-            Application.targetFrameRate = 60;
+            //Application.targetFrameRate = 60;
             CreateSingleton();
         }
 
@@ -65,7 +64,6 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 Destroy(this.gameObject);
             }
-
         }
 
         void CreateLevel()
@@ -140,9 +138,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             if (_isRestarting)
                 return;
 
-            //StartGame();
-            _isRestarting = true;
-            RotateGridContainer();
+            StartGame();
+            //_isRestarting = true;
+            //RotateGridContainer();
         }
 
         private void RotateGridContainer()
@@ -151,18 +149,19 @@ namespace YugantLoyaLibrary.WordSearchGame
             levelHandler.SetLevelRunningBool(false);
             Transform gridContainer = _currLevel.GetGridContainerTrans();
 
-           
 
             if (_currLevel.gridSize.y == _currLevel.gridSize.x)
             {
                 Debug.Log("Rotate If !");
-                trans.DOScale(0.8f, levelHandler.timeToRotateGrid/2).OnComplete(() =>
+                trans.DOScale(0.8f, levelHandler.timeToRotateGrid / 2).OnComplete(() =>
                 {
-                    trans.DOScale(1f, levelHandler.timeToRotateGrid/2);
+                    trans.DOScale(1f, levelHandler.timeToRotateGrid / 2);
                 });
 
                 Quaternion localRotation = trans.localRotation;
-                trans.DORotate(new Vector3(localRotation.eulerAngles.x, localRotation.eulerAngles.y, localRotation.eulerAngles.z + 90f), levelHandler.timeToRotateGrid).OnComplete(() =>
+                trans.DORotate(
+                    new Vector3(localRotation.eulerAngles.x, localRotation.eulerAngles.y,
+                        localRotation.eulerAngles.z + 90f), levelHandler.timeToRotateGrid).OnComplete(() =>
                 {
                     _isRestarting = false;
                     levelHandler.SetLevelRunningBool(true);
@@ -172,7 +171,9 @@ namespace YugantLoyaLibrary.WordSearchGame
                 {
                     GameObject gm = gridContainer.GetChild(i).gameObject;
                     Quaternion rotation = gm.transform.localRotation;
-                    gm.transform.DOLocalRotate(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, rotation.eulerAngles.z-90f), levelHandler.timeToRotateGrid);
+                    gm.transform.DOLocalRotate(
+                        new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, rotation.eulerAngles.z - 90f),
+                        levelHandler.timeToRotateGrid);
                 }
             }
             else
@@ -185,7 +186,9 @@ namespace YugantLoyaLibrary.WordSearchGame
                 });
 
                 Quaternion localRotation = trans.localRotation;
-                trans.DORotate(new Vector3(localRotation.eulerAngles.x, localRotation.eulerAngles.y, localRotation.eulerAngles.z + 180f), levelHandler.timeToRotateGrid * 2).OnComplete(() =>
+                trans.DORotate(
+                    new Vector3(localRotation.eulerAngles.x, localRotation.eulerAngles.y,
+                        localRotation.eulerAngles.z + 180f), levelHandler.timeToRotateGrid * 2).OnComplete(() =>
                 {
                     _isRestarting = false;
                     levelHandler.SetLevelRunningBool(true);
@@ -195,7 +198,9 @@ namespace YugantLoyaLibrary.WordSearchGame
                 {
                     GameObject gm = gridContainer.GetChild(i).gameObject;
                     Quaternion rotation = gm.transform.localRotation;
-                    gm.transform.DOLocalRotate(new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, rotation.eulerAngles.z - 180f), levelHandler.timeToRotateGrid * 2);
+                    gm.transform.DOLocalRotate(
+                        new Vector3(rotation.eulerAngles.x, rotation.eulerAngles.y, rotation.eulerAngles.z - 180f),
+                        levelHandler.timeToRotateGrid * 2);
                 }
             }
         }
@@ -241,10 +246,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             fadeCanvasGroup.DOFade(1f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
             {
                 StartGame();
-                fadeCanvasGroup.DOFade(0f, timeToSwitchToNextLevel / 2f).OnComplete(() =>
-                {
-
-                });
+                fadeCanvasGroup.DOFade(0f, timeToSwitchToNextLevel / 2f).OnComplete(() => { });
             });
         }
     }

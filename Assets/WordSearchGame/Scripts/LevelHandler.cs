@@ -30,13 +30,13 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         [Header("References")] [HideInInspector]
         public Camera cam;
-
+        public ParticleSystem touchEffectRef;
+        private Renderer _touchEffectRenderer;
         [SerializeField] Level currLevel;
         [SerializeField] Grid currGrid, startingGrid, targetGrid, lastGrid;
         [SerializeField] LayerMask gridLayerMask;
         RectTransform _levelHandlerRect;
         public int showGridTillLevel = 4, coinPerLevel = 100;
-
 
         [Header("Level Info")] public char[][] gridData;
         public float timeToShowHint = 0.5f, timeToRotateGrid = 0.5f;
@@ -46,7 +46,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         public GameController.Direction mainDir;
         bool _isLevelRunning = true;
         private int _colorIndex;
-
+        
         private void OnEnable()
         {
             _onNewLetterAddEvent += AddNewLetter;
@@ -72,6 +72,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             inputGridsList = new List<Grid>();
             wordList = new List<LevelWords>();
             _levelHandlerRect = GetComponent<RectTransform>();
+            _touchEffectRenderer = touchEffectRef.GetComponent<Renderer>();
         }
 
         public void LevelStartInit()
@@ -151,7 +152,12 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             if (!_isLevelRunning)
                 return;
-
+            
+            touchEffectRef.gameObject.SetActive(true);
+            Vector2 pos = cam.ScreenToWorldPoint(eventData.position);
+            TouchEffect(true);
+            UpdateTouchEffect(pos);
+            
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
 
             //Debug.Log("Curr Obj : " + currObj.name,currObj);
@@ -174,8 +180,11 @@ namespace YugantLoyaLibrary.WordSearchGame
             if (!_isLevelRunning)
                 return;
 
+            Vector2 pos = cam.ScreenToWorldPoint(eventData.position);
+            UpdateTouchEffect(pos);
+            
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
-
+            
             if (currObj != null)
             {
                 //Debug.Log("Dragging Obj : " + currObj.name, currObj);
@@ -198,11 +207,32 @@ namespace YugantLoyaLibrary.WordSearchGame
             if (!_isLevelRunning)
                 return;
             Debug.Log("Pointer Up");
-
+            TouchEffect(false);
             startingGrid = null;
             CheckAnswer();
         }
 
+        void TouchEffect(bool isActive)
+        {
+            var mainModule =touchEffectRef.main;
+            mainModule.loop = isActive;
+
+            if (isActive)
+            {
+                touchEffectRef.Play();
+            }
+        }
+        
+        void UpdateTouchEffect(Vector2 pos)
+        {
+            touchEffectRef.transform.position = pos;
+        }
+
+        void SetTouchEffectColor(Color color)
+        {
+            _touchEffectRenderer.material.color = color;
+        }
+        
         void InputStartData(Grid gridScript)
         {
             startingGrid = gridScript;
@@ -399,14 +429,14 @@ namespace YugantLoyaLibrary.WordSearchGame
 
             if (isAllGridInBetweenAvail)
             {
-                Debug.Log("All Grid Available !");
+                //Debug.Log("All Grid Available !");
                 Vector2 targetPos = ConvertLinePointToMousePos(1);
                 targetGrid = GetGridByMousePos(targetPos);
                 UpdateInputList();
             }
             else
             {
-                Debug.Log("Some Grid Not Available !");
+                //Debug.Log("Some Grid Not Available !");
                 SetLinePoints(2, 1, lastGrid);
             }
         }
@@ -470,7 +500,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                         int max = Mathf.Abs(yDiff);
                         for (int i = 0; i <= max; i++)
                         {
-                            Grid grid = GetGridByGridID(firstX, firstY + i);
+                            Grid grid = GetGridByGridID(firstX, firstY - i);
                             if (grid != null && grid.isSelectable == false)
                             {
                                 Debug.Log("Not Selectable Grids Name : " + grid.gameObject.name);
@@ -732,6 +762,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             //Debug.Log("Color Index " + colorIndex);
             Color color = levelLineColorList[_colorIndex];
             currLevel.SetLineRenderer(line, color);
+            SetTouchEffectColor(color);
         }
 
         private void LevelComplete()

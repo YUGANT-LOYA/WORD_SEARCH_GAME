@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,32 +6,20 @@ namespace YugantLoyaLibrary.WordSearchGame
 {
     public class Grid : MonoBehaviour
     {
-        [SerializeField] TextMeshProUGUI gridText;
+        [SerializeField] private TextMeshProUGUI gridText;
         public Image gridBg;
-        public bool isCorrect;
-        [SerializeField] Vector2Int id;
+        public bool isSelectable = true;
+        [SerializeField] private Vector2Int id;
 
-        public Vector2Int gridID
+        public Vector2Int GridID
         {
-            get
-            {
-                return id;
-            }
-            set
-            {
-                id = value;
-            }
+            get => id;
+            set => id = value;
         }
-        public string gridTextData
+        public string GridTextData
         {
-            get
-            {
-                return gridText.text;
-            }
-            set
-            {
-                gridText.text = value;
-            }
+            get => gridText.text;
+            set => gridText.text = value;
         }
 
         public void SetGridBg(bool isActive)

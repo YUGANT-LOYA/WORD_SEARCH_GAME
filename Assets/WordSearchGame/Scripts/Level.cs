@@ -146,7 +146,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                     GameObject gmObj = Instantiate(gridPrefab, gridContainer);
                     gmObj.name = $"Grid_{i}_{j}";
                     Grid gridScript = gmObj.GetComponent<Grid>();
-                    gridScript.gridID = new Vector2Int(i, j);
+                    gridScript.GridID = new Vector2Int(i, j);
                     _levelHandler.totalGridsList.Add(gridScript);
                     AssignGridData(gridScript, i, j);
 
@@ -171,7 +171,13 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private void AssignGridData(Grid gridScript, int row, int column)
         {
-            gridScript.gridTextData = _levelHandler.gridData[row][column].ToString().ToUpper();
+            string str = _levelHandler.gridData[row][column].ToString().ToUpper();
+            gridScript.GridTextData = str;
+            
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                gridScript.isSelectable = false;
+            }
         }
 
         private void ResetQuesData()

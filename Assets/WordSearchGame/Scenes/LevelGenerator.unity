@@ -787,7 +787,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 400, y: 150}
+  m_AnchoredPosition: {x: 350, y: 150}
   m_SizeDelta: {x: 250, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &927706961
@@ -1244,7 +1244,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1152217913}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1523,7 +1523,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1432210749
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1542,7 +1542,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -400, y: 150}
+  m_AnchoredPosition: {x: -350, y: 150}
   m_SizeDelta: {x: 250, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1432210750
@@ -1774,6 +1774,7 @@ MonoBehaviour:
   currGrid: {fileID: 0}
   startingGrid: {fileID: 0}
   targetGrid: {fileID: 0}
+  lastGrid: {fileID: 0}
   gridLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -1853,16 +1854,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c5e1dae06ef5054699be73d3684dbfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelNum: 64
+  levelNum: 65
   levelDataInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
   wordList:
-  - bassoon
-  - calliope
-  - kazoo
-  - chimes
-  - spinet
-  - triangle
-  - tuba
+  - arxnh
+  - vlqa
+  - ohym
+  - pbqm
   numRows: 8
   numColumns: 8
   letterIndex: 0
@@ -1871,54 +1869,36 @@ MonoBehaviour:
   currCheckingGrid: {x: 0, y: 0}
   levelData:
     gridSize: {x: 8, y: 8}
-    levelCsv: {fileID: 4900000, guid: a5866dfe7651b8842be2d17ab31e4400, type: 3}
+    levelCsv: {fileID: 4900000, guid: c8b272ffa10a1384d93ea5ade82dd56f, type: 3}
     words:
-    - word: BASSOON
-      firstLetterGridVal: {x: 1, y: 1}
+    - word: ARXNH
+      firstLetterGridVal: {x: 5, y: 0}
+      dir: 6
+    - word: VLQA
+      firstLetterGridVal: {x: 4, y: 4}
+      dir: 6
+    - word: OHYM
+      firstLetterGridVal: {x: 7, y: 0}
+      dir: 6
+    - word: PBQM
+      firstLetterGridVal: {x: 7, y: 4}
       dir: 4
-    - word: CALLIOPE
-      firstLetterGridVal: {x: 0, y: 2}
-      dir: 2
-    - word: KAZOO
-      firstLetterGridVal: {x: 7, y: 7}
-      dir: 3
-    - word: CHIMES
-      firstLetterGridVal: {x: 0, y: 2}
-      dir: 4
-    - word: SPINET
-      firstLetterGridVal: {x: 1, y: 4}
-      dir: 2
-    - word: TRIANGLE
-      firstLetterGridVal: {x: 4, y: 0}
-      dir: 4
-    - word: TUBA
-      firstLetterGridVal: {x: 3, y: 1}
-      dir: 1
   dataInfo:
     gridSize: {x: 8, y: 8}
     levelCsv: {fileID: 0}
     words:
-    - word: BASSOON
-      firstLetterGridVal: {x: 1, y: 1}
+    - word: ARXNH
+      firstLetterGridVal: {x: 5, y: 0}
+      dir: 6
+    - word: VLQA
+      firstLetterGridVal: {x: 4, y: 4}
+      dir: 6
+    - word: OHYM
+      firstLetterGridVal: {x: 7, y: 0}
+      dir: 6
+    - word: PBQM
+      firstLetterGridVal: {x: 7, y: 4}
       dir: 4
-    - word: CALLIOPE
-      firstLetterGridVal: {x: 0, y: 2}
-      dir: 2
-    - word: KAZOO
-      firstLetterGridVal: {x: 7, y: 7}
-      dir: 3
-    - word: CHIMES
-      firstLetterGridVal: {x: 0, y: 2}
-      dir: 4
-    - word: SPINET
-      firstLetterGridVal: {x: 1, y: 4}
-      dir: 2
-    - word: TRIANGLE
-      firstLetterGridVal: {x: 4, y: 0}
-      dir: 4
-    - word: TUBA
-      firstLetterGridVal: {x: 3, y: 1}
-      dir: 1
   retrieveDatafile: {fileID: 0}
 --- !u!4 &1714020066
 Transform:

@@ -22,26 +22,23 @@ namespace YugantLoyaLibrary.WordSearchGame
         private delegate void NewLetterDelegate(Grid grid);
 
         private NewLetterDelegate _onNewLetterAddEvent;
+
         public delegate void GameCompleteDelegate();
+
         public GameCompleteDelegate onGameCompleteEvent;
 
 
-        [Header("References")]
-        [HideInInspector] public Camera cam;
+        [Header("References")] [HideInInspector]
+        public Camera cam;
+
         [SerializeField] Level currLevel;
-        [SerializeField] Grid currGrid, startingGrid, targetGrid;
+        [SerializeField] Grid currGrid, startingGrid, targetGrid, lastGrid;
         [SerializeField] LayerMask gridLayerMask;
         RectTransform _levelHandlerRect;
-        public int showGridTillLevel = 4,coinPerLevel = 100;
+        public int showGridTillLevel = 4, coinPerLevel = 100;
 
 
-        
-
-
-        
-
-        [Header("Level Info")]
-        public char[][] gridData;
+        [Header("Level Info")] public char[][] gridData;
         public float timeToShowHint = 0.5f, timeToRotateGrid = 0.5f;
         public List<Color> levelLineColorList = new List<Color>();
         public List<Grid> totalGridsList, inputGridsList;
@@ -54,7 +51,6 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             _onNewLetterAddEvent += AddNewLetter;
             onGameCompleteEvent += LevelComplete;
-
         }
 
         private void OnDisable()
@@ -86,7 +82,8 @@ namespace YugantLoyaLibrary.WordSearchGame
         public void GetGridData()
         {
             TextAsset levelTextFile = GameController.instance.GetGridDataOfLevel();
-            string levelData = levelTextFile.text.Trim();
+            //string levelData = levelTextFile.text.Trim();
+            string levelData = levelTextFile.text;
             //Debug.Log("Level Data String : " + levelData);
             int row = currLevel.gridSize.x;
             int col = currLevel.gridSize.y;
@@ -163,15 +160,13 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 Grid grid = currObj.GetComponent<Grid>();
 
-                if (IsLayerSame(currObj) && !IsGridExistInList(grid))
+                if (IsLayerSame(currObj) && !IsGridExistInList(grid) && grid.isSelectable)
                 {
                     //Debug.Log("GameObj : " + eventData.pointerCurrentRaycast.gameObject);
                     //Debug.Log("Mouse Pos : " + Input.mousePosition);
                     InputStartData(grid);
                 }
-           
             }
-
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -180,16 +175,20 @@ namespace YugantLoyaLibrary.WordSearchGame
                 return;
 
             GameObject currObj = eventData.pointerCurrentRaycast.gameObject;
-            
+
             if (currObj != null)
             {
                 //Debug.Log("Dragging Obj : " + currObj.name, currObj);
                 if (startingGrid != null && IsLayerSame(currObj))
                 {
                     Grid gridScript = currObj.GetComponent<Grid>();
-                    currGrid = gridScript;
 
-                    SetTargetGrid();
+
+                    if (gridScript.isSelectable)
+                    {
+                        currGrid = gridScript;
+                        SetTargetGrid();
+                    }
                 }
             }
         }
@@ -223,31 +222,27 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                 if (grid != currGrid)
                 {
-
                 }
                 else
                 {
-
                 }
             }
+
             return null;
         }
 
         private void SetLinePoints(int totalPoints, int index, Grid grid)
         {
             currLevel.GetLineRenderer().positionCount = totalPoints;
-
-            //Vector2 worldPos = grid.transform.TransformPoint(grid.transform.position);
-
             Vector2 mousePos = ConvertTransformToMousePos(grid.transform.position);
-
             //Debug.Log("Line Mouse Pos : " + mousePos);
             currLevel.SetLineRendererPoint(index, mousePos);
         }
 
         private Vector3 ConvertMouseToLineRendererPoint(Vector3 mousePosition)
         {
-            Vector3 worldMousePosition = cam.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, cam.nearClipPlane));
+            Vector3 worldMousePosition =
+                cam.ScreenToWorldPoint(new Vector3(mousePosition.x, mousePosition.y, cam.nearClipPlane));
             Vector3 pos = transform.InverseTransformPoint(worldMousePosition);
 
             //Debug.Log("linePoint : " + pos);
@@ -257,7 +252,8 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         private Vector2 ConvertLinePointToMousePos(int index)
         {
-            Vector3 worldPosition = currLevel.GetLineRenderer().transform.TransformPoint(currLevel.GetLineRenderer().GetPosition(index));
+            Vector3 worldPosition = currLevel.GetLineRenderer().transform
+                .TransformPoint(currLevel.GetLineRenderer().GetPosition(index));
 
             // Convert world position to screen space
             Vector3 screenPosition = cam.WorldToScreenPoint(worldPosition);
@@ -322,8 +318,8 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             if (gridObj != null)
             {
-                gridObj.isCorrect = true;
-                currLevel.TouchTextData += gridObj.gridTextData;
+                lastGrid = gridObj;
+                currLevel.TouchTextData += gridObj.GridTextData;
                 inputGridsList.Add(gridObj);
             }
         }
@@ -335,6 +331,8 @@ namespace YugantLoyaLibrary.WordSearchGame
             currLevel.TouchTextData = "";
             currGrid = null;
             startingGrid = null;
+            targetGrid = null;
+            lastGrid = null;
 
             if (!isMarkedCorrect)
             {
@@ -363,28 +361,28 @@ namespace YugantLoyaLibrary.WordSearchGame
         void SetTargetGrid()
         {
             //x behaves as i and y behaves as j.
-            if (currGrid.gridID.x - startingGrid.gridID.x == 0)
+            if (currGrid.GridID.x - startingGrid.GridID.x == 0)
             {
                 //It means that constant X Axis.
                 mainDir = GameController.Direction.HORIZONTAL;
                 SetLinePoints(2, 1, currGrid);
                 //Debug.Log("X Direction Pattern Moving !");
             }
-            else if (currGrid.gridID.y - startingGrid.gridID.y == 0)
+            else if (currGrid.GridID.y - startingGrid.GridID.y == 0)
             {
                 //It means that constant Y Axis.
                 mainDir = GameController.Direction.VERTICAL;
                 SetLinePoints(2, 1, currGrid);
                 //Debug.Log("Y Direction Pattern Moving !");
             }
-            else if (currGrid.gridID.y - startingGrid.gridID.y == currGrid.gridID.x - startingGrid.gridID.x)
+            else if (currGrid.GridID.y - startingGrid.GridID.y == currGrid.GridID.x - startingGrid.GridID.x)
             {
                 //Straight Diagonal Direction Entered.
                 mainDir = GameController.Direction.STRAIGHT_DIAGONAL;
                 SetLinePoints(2, 1, currGrid);
                 //Debug.Log("Straight Diagonal Pattern Moving !");
             }
-            else if (currGrid.gridID.y - startingGrid.gridID.y == -(currGrid.gridID.x - startingGrid.gridID.x))
+            else if (currGrid.GridID.y - startingGrid.GridID.y == -(currGrid.GridID.x - startingGrid.GridID.x))
             {
                 //Reverse Diagonal Direction Entered.
                 mainDir = GameController.Direction.REVERSE_DIAGONAL;
@@ -397,9 +395,155 @@ namespace YugantLoyaLibrary.WordSearchGame
                 //Debug.Log("Random Pattern Moving !");
             }
 
-            Vector2 targetPos = ConvertLinePointToMousePos(1);
-            targetGrid = GetGridByMousePos(targetPos);
-            UpdateInputList();
+            bool isAllGridInBetweenAvail = IsAllGridAvail();
+
+            if (isAllGridInBetweenAvail)
+            {
+                Debug.Log("All Grid Available !");
+                Vector2 targetPos = ConvertLinePointToMousePos(1);
+                targetGrid = GetGridByMousePos(targetPos);
+                UpdateInputList();
+            }
+            else
+            {
+                Debug.Log("Some Grid Not Available !");
+                SetLinePoints(2, 1, lastGrid);
+            }
+        }
+
+        private bool IsAllGridAvail()
+        {
+            int firstX = startingGrid.GridID.x;
+            int firstY = startingGrid.GridID.y;
+            int secondX = currGrid.GridID.x;
+            int secondY = currGrid.GridID.y;
+            int xDiff = secondX - firstX;
+            int yDiff = secondY - firstY;
+            
+            switch (mainDir)
+            {
+                case GameController.Direction.VERTICAL:
+                    if (xDiff > 0)
+                    {
+                        for (int i = 1; i < xDiff; i++)
+                        {
+                            Grid grid = GetGridByGridID(firstX + i, firstY);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grid Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int max = Mathf.Abs(xDiff);
+                        for (int i = 0; i <= max; i++)
+                        {
+                            Grid grid = GetGridByGridID(secondX + i, firstY);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grids Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+
+                    break;
+
+                case GameController.Direction.HORIZONTAL:
+
+                    if (yDiff > 0)
+                    {
+                        for (int i = 1; i < yDiff; i++)
+                        {
+                            Grid grid = GetGridByGridID(firstX, firstY + i);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grid Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int max = Mathf.Abs(yDiff);
+                        for (int i = 0; i <= max; i++)
+                        {
+                            Grid grid = GetGridByGridID(firstX, firstY + i);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grids Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+
+                    break;
+
+                case GameController.Direction.STRAIGHT_DIAGONAL:
+
+
+                    if (yDiff > 0)
+                    {
+                        for (int i = 1; i < yDiff; i++)
+                        {
+                            Grid grid = GetGridByGridID(firstX + i, firstY + i);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grid Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int max = Mathf.Abs(yDiff);
+                        for (int i = 0; i <= max; i++)
+                        {
+                            Grid grid = GetGridByGridID(firstX - i, firstY - i);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grids Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+
+                    break;
+
+                case GameController.Direction.REVERSE_DIAGONAL:
+
+                    if (yDiff > 0)
+                    {
+                        for (int i = 1; i < yDiff; i++)
+                        {
+                            Grid grid = GetGridByGridID(firstX - i, firstY + i);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grid Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int max = Mathf.Abs(yDiff);
+                        for (int i = 0; i <= max; i++)
+                        {
+                            Grid grid = GetGridByGridID(firstX + i, firstY - i);
+                            if (grid != null && grid.isSelectable == false)
+                            {
+                                Debug.Log("Not Selectable Grids Name : " + grid.gameObject.name);
+                                return false;
+                            }
+                        }
+                    }
+
+                    break;
+            }
+            
+            return true;
         }
 
         void UpdateInputList()
@@ -410,10 +554,10 @@ namespace YugantLoyaLibrary.WordSearchGame
             // gridId x is behaving as row(i) .
             //gridId y is behaving as column(j).
             //It is reverse in terms of x and y.
-            int firstX = startingGrid.gridID.x;
-            int firstY = startingGrid.gridID.y;
-            int secondX = targetGrid.gridID.x;
-            int secondY = targetGrid.gridID.y;
+            int firstX = startingGrid.GridID.x;
+            int firstY = startingGrid.GridID.y;
+            int secondX = targetGrid.GridID.x;
+            int secondY = targetGrid.GridID.y;
 
             int xDiff = secondX - firstX;
             int yDiff = secondY - firstY;
@@ -489,7 +633,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                         Grid grid = GetGridByGridID(i, firstY);
                         _onNewLetterAddEvent?.Invoke(grid);
                     }
-
                 }
                 else if (secondY - firstY < 0)
                 {
@@ -500,7 +643,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                     }
                 }
             }
-
         }
 
         Grid GetGridByGridID(int i, int j)
@@ -596,7 +738,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         {
             _isLevelRunning = false;
             GameController.instance.uiManager.CoinCollectionAnimation(coinPerLevel);
-            
+
             //GameController.instance.NextLevel();
         }
 

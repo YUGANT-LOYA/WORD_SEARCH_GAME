@@ -51,8 +51,8 @@ namespace WordSearchGame.Editor
             EditorGUILayout.PropertyField(_editorWordList);
 
 
-
-            levelGenerator.directions = new GameController.InputDirection[Enum.GetNames(typeof(GameController.InputDirection)).Length - 1];
+            levelGenerator.directions =
+                new GameController.InputDirection[Enum.GetNames(typeof(GameController.InputDirection)).Length - 1];
 
             // Create a 2D array for gridData
             if (levelGenerator.numRows > 0 && levelGenerator.numColumns > 0)
@@ -84,9 +84,16 @@ namespace WordSearchGame.Editor
 
                         if (!string.IsNullOrEmpty(str))
                         {
-                            levelGenerator.gridData[i, j] = str[0].ToString().ToUpper();
+                            levelGenerator.gridData[i, j] = str[0].ToString().ToUpper().Trim();
                         }
+                        
+                        //
+                        // if (!string.IsNullOrEmpty(str))
+                        // {
+                        //     levelGenerator.gridData[i, j] = str[0].ToString().ToUpper();
+                        // }
                     }
+
                     EditorGUILayout.EndHorizontal();
                 }
 
@@ -111,7 +118,6 @@ namespace WordSearchGame.Editor
                     levelGenerator.wordList.Clear();
 
                     serializedObject.ApplyModifiedProperties();
-
                 }
 
                 EditorGUILayout.EndHorizontal();
@@ -208,13 +214,14 @@ namespace WordSearchGame.Editor
                         for (int j = 0; j < levelGenerator.numColumns; j++)
                         {
                             string str = levelGenerator.gridData[i, j];
-                            
+
                             if (string.IsNullOrWhiteSpace(str) || string.IsNullOrEmpty(str))
                             {
-                                levelGenerator.gridData[i,j] = levelGenerator.GenerateRandom_ASCII_Code();
+                                levelGenerator.gridData[i, j] = levelGenerator.GenerateRandom_ASCII_Code();
                             }
                         }
                     }
+
                     Debug.Log("Grids Filled !");
                 }
 
@@ -258,9 +265,11 @@ namespace WordSearchGame.Editor
         }
 
 
-        private static void UpdateLevelDataInfo(string word, LevelGenerator levelGenerator, GameController.InputDirection dir, Vector2Int firstLetterID)
+        private static void UpdateLevelDataInfo(string word, LevelGenerator levelGenerator,
+            GameController.InputDirection dir, Vector2Int firstLetterID)
         {
-            levelGenerator.dataInfo.gridSize = new Vector2Int(levelGenerator.gridData.GetLength(0), levelGenerator.gridData.GetLength(1));
+            levelGenerator.dataInfo.gridSize = new Vector2Int(levelGenerator.gridData.GetLength(0),
+                levelGenerator.gridData.GetLength(1));
 
             LevelDataInfo.WordInfo wordInfo = new LevelDataInfo.WordInfo
             {

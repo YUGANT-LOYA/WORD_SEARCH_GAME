@@ -45,7 +45,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 for (int j = 0; j < data.GetLength(1); j++)
                 {
-                    csvContent.Append(data[i, j]);
+                    csvContent.Append(!string.IsNullOrWhiteSpace(data[i, j]) ? data[i, j] : " ");
                     csvContent.Append(",");
                 }
                 csvContent.AppendLine();

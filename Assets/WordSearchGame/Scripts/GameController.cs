@@ -9,14 +9,14 @@ namespace YugantLoyaLibrary.WordSearchGame
         
         [Header("References")]
         public UIManager uiManager;
-        [SerializeField] LevelDataInfo levelDataInfo;
-        [SerializeField] LevelHandler levelHandler;
-        [SerializeField] Transform levelContainer;
-        [SerializeField] CanvasGroup fadeCanvasGroup;
+        [SerializeField] private LevelDataInfo levelDataInfo;
+        [SerializeField] private LevelHandler levelHandler;
+        [SerializeField] private Transform levelContainer;
+        [SerializeField] private CanvasGroup fadeCanvasGroup;
         public Transform coinContainerTran;
         public int coinPoolSize = 20;
-        Level _currLevel;
-        bool _isRestarting;
+        private Level _currLevel;
+        private bool _isRestarting;
 
         [SerializeField] private float timeToSwitchToNextLevel = 1f;
 

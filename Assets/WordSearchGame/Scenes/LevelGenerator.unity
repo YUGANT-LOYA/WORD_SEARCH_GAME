@@ -668,7 +668,7 @@ MonoBehaviour:
   coinAnimTime: 2
   coinTextUpdateTime: 0
   coinRotateAngle: 810
-  maxCoinScale: 45
+  maxCoinScale: 15
   coinText: {fileID: 389480124}
   winPanel: {fileID: 2007930251}
   menuGameObj: {fileID: 1499973342}
@@ -2448,7 +2448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d63c616eee17ed408db6b9673a71672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coinPrefab: {fileID: 5845960473098219695, guid: 2910ee907e62b874e9872433e634127f, type: 3}
+  coinPrefab: {fileID: 3066483134780848395, guid: 31da605b015518d4baf21be6d9e0b399, type: 3}
   levelPrefab: {fileID: 3546663009718316906, guid: 7d0fa61aa0a35894ea31bb22656eac7e, type: 3}
   hintCirclePrefab: {fileID: 1460601674966876119, guid: dfcf241f372238e47b30aab1d8397e48, type: 3}
   gridPrefab: {fileID: 801419134728346710, guid: 02dfa21492ed2c34e8be9330c6814c2b, type: 3}

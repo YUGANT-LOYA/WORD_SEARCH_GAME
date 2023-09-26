@@ -275,5 +275,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridText: {fileID: 1826602843}
   gridBg: {fileID: 801419134728346704}
-  isCorrect: 0
+  isSelectable: 1
   id: {x: 0, y: 0}

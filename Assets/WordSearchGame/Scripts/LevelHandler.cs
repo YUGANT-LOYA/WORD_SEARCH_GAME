@@ -191,8 +191,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                 if (startingGrid != null && IsLayerSame(currObj))
                 {
                     Grid gridScript = currObj.GetComponent<Grid>();
-
-
                     if (gridScript.isSelectable)
                     {
                         currGrid = gridScript;
@@ -696,10 +694,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             bool isCorrect = false;
             //Debug.Log("Input Data : " + ans);
             List<LevelWords> levelWordList = wordList;
-            foreach (var wordInfo in levelWordList)
+            foreach (var info in levelWordList)
             {
-                string revStr = GetReverseString(wordInfo.wordInfo.word, out var originalString);
-
+                string revStr = GetReverseString(info.wordInfo.word, out var originalString);
                 //Debug.Log("Original Str : " + originalString);
                 //Debug.Log("Rev Str : " + revStr);
                 QuesGrid quesGrid = currLevel.GetQuesGrid(originalString, revStr);
@@ -707,8 +704,8 @@ namespace YugantLoyaLibrary.WordSearchGame
                 if ((originalString == ans || revStr == ans) && quesGrid != null && !quesGrid.isMarked)
                 {
                     //Debug.Log("Correct !");
-                    wordInfo.isWordMarked = true;
-                    RemoveHint(wordInfo);
+                    info.isWordMarked = true;
+                    RemoveHint(info);
                     currLevel.UpdateQuesList(originalString);
                     isCorrect = true;
                     break;
@@ -744,10 +741,10 @@ namespace YugantLoyaLibrary.WordSearchGame
             char[] revArr = mainStr.ToCharArray();
             Array.Reverse(revArr);
             string revStr = new string(revArr);
-
+        
             //Debug.Log("Str = " + str);
             //Debug.Log("Reverse Str = " + revStr);
-
+        
             return revStr;
         }
 
@@ -763,6 +760,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             Color color = levelLineColorList[_colorIndex];
             currLevel.SetLineRenderer(line, color);
             SetTouchEffectColor(color);
+            touchEffectRef.gameObject.SetActive(false);
         }
 
         private void LevelComplete()

@@ -10,26 +10,33 @@ namespace YugantLoyaLibrary.WordSearchGame
     {
         [Tooltip("CSV File will be names According to Level number as Level_{levelNum}")]
         public int levelNum;
+
         public LevelDataInfo levelDataInfo;
+
         [Tooltip("The Words which you need to find in the Grids and add to LevelDataInfo")]
         public List<string> wordList = new List<string>();
+
         public int numRows;
         public int numColumns;
         public int letterIndex;
-        [Tooltip("Fill The Grid With Data")]
-        public string[,] gridData;
+        [Tooltip("Fill The Grid With Data")] public string[,] gridData;
         public bool validData = true;
+
         [Tooltip("All Directions in which words will can be marked and will find the word inside the Grid")]
         public GameController.InputDirection[] directions;
+
         private GameController.InputDirection _matchingDir;
         public Vector2Int currCheckingGrid;
+
         [Tooltip("Data that is filled by Level Generator and filled in Scriptable Object")]
         public LevelDataInfo.LevelInfo levelData;
+
         public LevelDataInfo.LevelInfo dataInfo;
 
-        [Tooltip("If You need to Copy CSV File Data to Scriptable Object, assign csv File and Click Retrieve File Data To Scriptable Object")]
+        [Tooltip(
+            "If You need to Copy CSV File Data to Scriptable Object, assign csv File and Click Retrieve File Data To Scriptable Object")]
         public TextAsset retrieveDatafile;
-        
+
         private void Start()
         {
             gridData = new string[numRows, numColumns];
@@ -48,12 +55,13 @@ namespace YugantLoyaLibrary.WordSearchGame
                     csvContent.Append(!string.IsNullOrWhiteSpace(data[i, j]) ? data[i, j] : " ");
                     csvContent.Append(",");
                 }
+
                 csvContent.AppendLine();
             }
 
             csvContent.AppendLine();
-            
-            for(int i = 0;i < levelGenerator.levelData.words.Count; i++)
+
+            for (int i = 0; i < levelGenerator.levelData.words.Count; i++)
             {
                 csvContent.Append(levelGenerator.levelData.words[i].word);
                 csvContent.AppendLine();
@@ -74,7 +82,6 @@ namespace YugantLoyaLibrary.WordSearchGame
             {
                 Debug.Log("File Creating !!");
                 File.WriteAllText(filePath, csvContent.ToString());
-
             }
             else
             {
@@ -137,7 +144,8 @@ namespace YugantLoyaLibrary.WordSearchGame
 
                                     Debug.Log("Matching Dir : " + _matchingDir);
                                     int index = tempLetterIndex;
-                                    MatchLetterInCurrDirection(word, newIndex, out var wordFound, index, out tempLetterIndex);
+                                    MatchLetterInCurrDirection(word, newIndex, out var wordFound, index,
+                                        out tempLetterIndex);
 
                                     if (wordFound)
                                     {
@@ -157,7 +165,6 @@ namespace YugantLoyaLibrary.WordSearchGame
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -283,7 +290,8 @@ namespace YugantLoyaLibrary.WordSearchGame
             return -1;
         }
 
-        bool MatchLetterInCurrDirection(string word, Vector2Int newIndex, out bool isMatching, int index, out int tempLetterIndex)
+        bool MatchLetterInCurrDirection(string word, Vector2Int newIndex, out bool isMatching, int index,
+            out int tempLetterIndex)
         {
             isMatching = false;
             bool letterMatching = false;
@@ -432,8 +440,8 @@ namespace YugantLoyaLibrary.WordSearchGame
                     {
                         tempLetterIndex++;
                         Debug.Log($"Else Match Letter in Curr Direction !");
-                        return MatchLetterInCurrDirection(word, newIndex, out isMatching, tempLetterIndex, out tempLetterIndex);
-
+                        return MatchLetterInCurrDirection(word, newIndex, out isMatching, tempLetterIndex,
+                            out tempLetterIndex);
                     }
                 }
             }
@@ -452,16 +460,17 @@ namespace YugantLoyaLibrary.WordSearchGame
             LevelDataInfo.LevelInfo info = new LevelDataInfo.LevelInfo
             {
                 gridSize = levelData.gridSize,
-                words = levelData.words,
+                words = new List<LevelDataInfo.WordInfo>(levelData.words),
                 levelCsv = levelData.levelCsv
             };
-
+            
             levelDataInfo.levelInfo.Add(info);
 
             EditorUtility.SetDirty(levelDataInfo);
-
+            AssetDatabase.Refresh();
         }
 #endif
+        
         public void FillDataFromCsv(LevelGenerator levelGenerator)
         {
             TextAsset levelTextFile = levelGenerator.retrieveDatafile;

@@ -18,6 +18,7 @@ namespace YugantLoyaLibrary.WordSearchGame
         public Ease coinMovementEase;
         private float _coinTextUpdateTime;
         
+        
         public void CoinCollectionAnimation(int coinToAdd)
         {
             StartCoroutine(nameof(PlayCoinAnim), coinToAdd);

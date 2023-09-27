@@ -19,6 +19,7 @@ namespace YugantLoyaLibrary.WordSearchGame
             get => id;
             set => id = value;
         }
+        
         public string GridTextData
         {
             get => gridText.text;

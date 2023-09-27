@@ -138,9 +138,9 @@ namespace YugantLoyaLibrary.WordSearchGame
             if (_isRestarting)
                 return;
 
-            StartGame();
-            //_isRestarting = true;
-            //RotateGridContainer();
+            //StartGame();
+            _isRestarting = true;
+            RotateGridContainer();
         }
 
         private void RotateGridContainer()

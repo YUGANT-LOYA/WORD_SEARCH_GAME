@@ -116,26 +116,14 @@ namespace YugantLoyaLibrary.WordSearchGame
         
         public int CurrLevelNumber
         {
-            get
-            {
-                return PlayerPrefs.GetInt(StringHelper.LEVEL_NUM, 0);
-            }
-            set
-            {
-                PlayerPrefs.SetInt(StringHelper.LEVEL_NUM, value);
-            }
+            get => PlayerPrefs.GetInt(StringHelper.LEVEL_NUM, 0);
+            set => PlayerPrefs.SetInt(StringHelper.LEVEL_NUM, value);
         }
 
         public int TotalCoin
         {
-            get
-            {
-                return PlayerPrefs.GetInt(StringHelper.COIN_AVAIL, initialCoins);
-            }
-            set
-            {
-                PlayerPrefs.SetInt(StringHelper.COIN_AVAIL, value);
-            }
+            get => PlayerPrefs.GetInt(StringHelper.COIN_AVAIL, initialCoins);
+            set => PlayerPrefs.SetInt(StringHelper.COIN_AVAIL, value);
         }
     }
 }

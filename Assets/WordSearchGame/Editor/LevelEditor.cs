@@ -86,12 +86,6 @@ namespace WordSearchGame.Editor
                         {
                             levelGenerator.gridData[i, j] = str[0].ToString().ToUpper().Trim();
                         }
-                        
-                        //
-                        // if (!string.IsNullOrEmpty(str))
-                        // {
-                        //     levelGenerator.gridData[i, j] = str[0].ToString().ToUpper();
-                        // }
                     }
 
                     EditorGUILayout.EndHorizontal();

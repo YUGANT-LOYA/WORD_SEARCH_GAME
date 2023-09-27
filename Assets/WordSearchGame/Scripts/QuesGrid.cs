@@ -12,14 +12,8 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public string QuesTextData
         {
-            get
-            {
-                return quesText.text;
-            }
-            set
-            {
-                quesText.text = value;
-            }
+            get => quesText.text;
+            set => quesText.text = value;
         }
 
         public void StrikeQues()

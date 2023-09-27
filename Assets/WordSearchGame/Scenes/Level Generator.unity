@@ -912,45 +912,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c5e1dae06ef5054699be73d3684dbfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelNum: 69
+  levelNum: 75
   levelDataInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
-  wordList:
-  - udj
-  - ihh
-  - dl
-  numRows: 4
-  numColumns: 4
+  wordList: []
+  numRows: 10
+  numColumns: 10
   letterIndex: 0
   validData: 1
   directions: 0100000002000000030000000400000005000000060000000700000008000000
   currCheckingGrid: {x: 0, y: 0}
   levelData:
-    gridSize: {x: 4, y: 4}
-    levelCsv: {fileID: 4900000, guid: 6ec8f312fc88008408c5b81c015376ce, type: 3}
-    words:
-    - word: UDJ
-      firstLetterGridVal: {x: 2, y: 1}
-      dir: 1
-    - word: IHH
-      firstLetterGridVal: {x: 2, y: 2}
-      dir: 1
-    - word: DL
-      firstLetterGridVal: {x: 3, y: 2}
-      dir: 6
+    gridSize: {x: 0, y: 0}
+    levelCsv: {fileID: 0}
+    words: []
   dataInfo:
-    gridSize: {x: 4, y: 4}
+    gridSize: {x: 10, y: 10}
     levelCsv: {fileID: 0}
     words:
-    - word: UDJ
-      firstLetterGridVal: {x: 2, y: 1}
+    - word: APTITUDE
+      firstLetterGridVal: {x: 9, y: 1}
       dir: 1
-    - word: IHH
-      firstLetterGridVal: {x: 2, y: 2}
+    - word: LASTING
+      firstLetterGridVal: {x: 0, y: 7}
+      dir: 2
+    - word: BRAVO
+      firstLetterGridVal: {x: 7, y: 7}
+      dir: 3
+    - word: CIVIL
+      firstLetterGridVal: {x: 5, y: 0}
+      dir: 8
+    - word: BOUNTY
+      firstLetterGridVal: {x: 0, y: 6}
+      dir: 2
+    - word: ADORABLE
+      firstLetterGridVal: {x: 7, y: 5}
       dir: 1
-    - word: DL
-      firstLetterGridVal: {x: 3, y: 2}
-      dir: 6
-  retrieveDatafile: {fileID: 4900000, guid: 881eaab71bc3c4140840469014c5de66, type: 3}
+    - word: SUPPORTING
+      firstLetterGridVal: {x: 4, y: 0}
+      dir: 4
+    - word: AGREE
+      firstLetterGridVal: {x: 9, y: 9}
+      dir: 3
+    - word: READY
+      firstLetterGridVal: {x: 9, y: 7}
+      dir: 5
+    - word: JOKE
+      firstLetterGridVal: {x: 6, y: 2}
+      dir: 8
+  retrieveDatafile: {fileID: 0}
 --- !u!4 &960206002
 Transform:
   m_ObjectHideFlags: 0

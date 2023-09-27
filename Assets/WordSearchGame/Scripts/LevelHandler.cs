@@ -20,11 +20,8 @@ namespace YugantLoyaLibrary.WordSearchGame
         }
 
         private delegate void NewLetterDelegate(Grid grid);
-
         private NewLetterDelegate _onNewLetterAddEvent;
-
         public delegate void GameCompleteDelegate();
-
         public GameCompleteDelegate onGameCompleteEvent;
 
 

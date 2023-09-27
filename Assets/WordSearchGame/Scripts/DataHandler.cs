@@ -13,12 +13,12 @@ namespace YugantLoyaLibrary.WordSearchGame
         public GameObject coinPrefab;
         public GameObject levelPrefab,hintCirclePrefab, gridPrefab, quesPrefab;
         public LineRenderer lineRendererPrefab;
+        
         [Header("Data Info")]
-        [SerializeField] List<Color> totalColors = new List<Color>();
-        [FormerlySerializedAs("initial_Coins")] [Tooltip("When player first time start playing, Initial coins player have")]
+        [Tooltip("When player first time start playing, Initial coins player have")]
         public int initialCoins = 300;
-        public int colorIndex = 0;
-
+        [SerializeField] List<Color> totalColors = new List<Color>();
+        private int _colorIndex = 0;
 
         private void Awake()
         {
@@ -54,12 +54,12 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public Color UpdateColor()
         {
-            Color color = totalColors[colorIndex];
-            colorIndex++;
+            Color color = totalColors[_colorIndex];
+            _colorIndex++;
 
-            if(colorIndex >= totalColors.Count)
+            if(_colorIndex >= totalColors.Count)
             {
-                colorIndex = 0;
+                _colorIndex = 0;
             }
 
             return color;
@@ -67,7 +67,7 @@ namespace YugantLoyaLibrary.WordSearchGame
 
         public Color GetCurrentColor()
         {
-            Color color = totalColors[colorIndex];
+            Color color = totalColors[_colorIndex];
             return color;
         }
 

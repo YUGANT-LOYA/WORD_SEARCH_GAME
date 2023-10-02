@@ -912,53 +912,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c5e1dae06ef5054699be73d3684dbfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelNum: 75
-  levelDataInfo: {fileID: 11400000, guid: e9cf69ab673995449932a6b2de7cb292, type: 2}
+  levelNum: 0
+  levelDataInfo: {fileID: 0}
   wordList: []
-  numRows: 10
-  numColumns: 10
+  numRows: 0
+  numColumns: 0
   letterIndex: 0
   validData: 1
-  directions: 0100000002000000030000000400000005000000060000000700000008000000
+  directions: 0000000000000000000000000000000000000000000000000000000000000000
   currCheckingGrid: {x: 0, y: 0}
   levelData:
     gridSize: {x: 0, y: 0}
     levelCsv: {fileID: 0}
     words: []
   dataInfo:
-    gridSize: {x: 10, y: 10}
+    gridSize: {x: 0, y: 0}
     levelCsv: {fileID: 0}
-    words:
-    - word: APTITUDE
-      firstLetterGridVal: {x: 9, y: 1}
-      dir: 1
-    - word: LASTING
-      firstLetterGridVal: {x: 0, y: 7}
-      dir: 2
-    - word: BRAVO
-      firstLetterGridVal: {x: 7, y: 7}
-      dir: 3
-    - word: CIVIL
-      firstLetterGridVal: {x: 5, y: 0}
-      dir: 8
-    - word: BOUNTY
-      firstLetterGridVal: {x: 0, y: 6}
-      dir: 2
-    - word: ADORABLE
-      firstLetterGridVal: {x: 7, y: 5}
-      dir: 1
-    - word: SUPPORTING
-      firstLetterGridVal: {x: 4, y: 0}
-      dir: 4
-    - word: AGREE
-      firstLetterGridVal: {x: 9, y: 9}
-      dir: 3
-    - word: READY
-      firstLetterGridVal: {x: 9, y: 7}
-      dir: 5
-    - word: JOKE
-      firstLetterGridVal: {x: 6, y: 2}
-      dir: 8
+    words: []
   retrieveDatafile: {fileID: 0}
 --- !u!4 &960206002
 Transform:
@@ -1863,10 +1833,10 @@ MonoBehaviour:
   cam: {fileID: 0}
   touchEffectRef: {fileID: 7651802822443955217}
   currLevel: {fileID: 0}
-  currGrid: {fileID: 0}
-  startingGrid: {fileID: 0}
-  targetGrid: {fileID: 0}
-  lastGrid: {fileID: 0}
+  currGridTile: {fileID: 0}
+  startingGridTile: {fileID: 0}
+  targetGridTile: {fileID: 0}
+  lastGridTile: {fileID: 0}
   gridLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -2296,7 +2266,6 @@ GameObject:
   - component: {fileID: 2007930258}
   - component: {fileID: 2007930257}
   - component: {fileID: 2007930256}
-  - component: {fileID: 2007930255}
   m_Layer: 5
   m_Name: WinPanel
   m_TagString: Untagged
@@ -2364,19 +2333,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007930251}
   m_CullTransparentMesh: 1
---- !u!114 &2007930255
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2007930251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b63737bea1121984d90702ff7ed044c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nextButton: {fileID: 1001855187}
 --- !u!114 &2007930256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2456,6 +2412,7 @@ MonoBehaviour:
   gridPrefab: {fileID: 801419134728346710, guid: 02dfa21492ed2c34e8be9330c6814c2b, type: 3}
   quesPrefab: {fileID: 8076441460621347504, guid: 758beeb22023a2e42a283b07e3548d42, type: 3}
   lineRendererPrefab: {fileID: 6319055306387946753, guid: 507e894a8eb354b4dbe9977498d285fd, type: 3}
+  initialCoins: 300
   totalColors:
   - {r: 0.38364774, g: 1, b: 0.4247762, a: 0.92156863}
   - {r: 1, g: 0.37070796, b: 0.30817604, a: 0.92156863}
@@ -2470,8 +2427,6 @@ MonoBehaviour:
   - {r: 1, g: 0.47798735, b: 0.93281585, a: 0.92156863}
   - {r: 0.38364774, g: 1, b: 0.6147374, a: 0.92156863}
   - {r: 1, g: 0.36477983, b: 0.6016083, a: 0.92156863}
-  initialCoins: 300
-  colorIndex: 0
 --- !u!1 &5704458314791691809
 GameObject:
   m_ObjectHideFlags: 0

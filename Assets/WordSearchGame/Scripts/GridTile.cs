@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace YugantLoyaLibrary.WordSearchGame
 {
-    public class Grid : MonoBehaviour
+    public class GridTile : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI gridText;
         public Image gridBg;

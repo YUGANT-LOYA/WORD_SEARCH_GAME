@@ -201,10 +201,10 @@ namespace YugantLoyaLibrary.WordSearchGame
                     gmRect.sizeDelta = new Vector2(_currGridWidth, _currGridHeight);
                     gmRect.anchoredPosition = GetRandomPointOutOfScreen();
                     gmObj.name = $"Grid_{i}_{j}";
-                    Grid gridScript = gmObj.GetComponent<Grid>();
-                    gridScript.GridID = new Vector2Int(i, j);
-                    _levelHandler.totalGridsList.Add(gridScript);
-                    AssignGridData(gridScript, i, j);
+                    GridTile gridTileScript = gmObj.GetComponent<GridTile>();
+                    gridTileScript.GridID = new Vector2Int(i, j);
+                    _levelHandler.totalGridsList.Add(gridTileScript);
+                    AssignGridData(gridTileScript, i, j);
                     gmRect.transform.DOLocalMove(startPos, timeToPlaceGrid).SetEase(gridPlacementEase);
                     
                     if (DataHandler.instance.CurrLevelNumber < _levelHandler.showGridTillLevel)
@@ -213,11 +213,11 @@ namespace YugantLoyaLibrary.WordSearchGame
                         Color color = gridContainerImg.color;
                         gridContainerImg.color = new Color(color.r, color.g, color.b, 0f);
                         //gridContainerLayoutGroup.spacing = new Vector2(10f, 10f);
-                        gridScript.SetGridBg(true);
+                        gridTileScript.SetGridBg(true);
                     }
                     else
                     {
-                        gridScript.SetGridBg(false);
+                        gridTileScript.SetGridBg(false);
                     }
 
                     startPos += new Vector2(gridSpacing + _currGridWidth, 0);
@@ -228,14 +228,14 @@ namespace YugantLoyaLibrary.WordSearchGame
             }
         }
 
-        private void AssignGridData(Grid gridScript, int row, int column)
+        private void AssignGridData(GridTile gridTileScript, int row, int column)
         {
             string str = _levelHandler.gridData[row][column].ToString().ToUpper();
-            gridScript.GridTextData = str;
+            gridTileScript.GridTextData = str;
 
             if (string.IsNullOrWhiteSpace(str))
             {
-                gridScript.isSelectable = false;
+                gridTileScript.isSelectable = false;
             }
         }
 

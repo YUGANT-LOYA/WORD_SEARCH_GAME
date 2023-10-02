@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -41,7 +40,7 @@ namespace YugantLoyaLibrary.WordSearchGame
                 GameObject coin = DataHandler.instance.GetCoin();
                 Vector2 position = coinText.transform.position;
                 coin.transform.localScale = Vector3.one * maxCoinScale;
-                coin.transform.rotation = quaternion.identity;
+                coin.transform.rotation = Quaternion.identity;
                 coin.transform.position = new Vector3(xVal, yVal, 0f);
                 coin.SetActive(true);
 
